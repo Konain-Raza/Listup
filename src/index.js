@@ -1,0 +1,132 @@
+import Resolver from "@forge/resolver";
+import api, { storage, route } from "@forge/api";
+
+const resolver = new Resolver();
+
+// Fetch tasks for the issue
+resolver.define("getTasks", async (req) => {
+  const { issueKey } = req.payload;
+  try {
+    const tasks = await storage.get(`${issueKey}_tasks`);
+    console.log(`Fetched tasks for issue ${issueKey}:`, tasks);
+    return tasks || [];
+  } catch (error) {
+    console.error("Error fetching tasks for issue:", issueKey, error);
+    throw new Error("Failed to retrieve tasks.");
+  }
+});
+
+// Fetch templates based on current route
+resolver.define("getTemplates", async (req) => {
+  try {
+    const currentRoute = req.payload?.currentRoute || "";
+    console.log("Current Route:", currentRoute);
+    
+    const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
+    let subdomain = match ? match[1] : null;
+
+    if (!subdomain) {
+      if (currentRoute.includes("localhost")) {
+        console.log("Running on localhost, no subdomain expected.");
+        subdomain = "localhost"; // Default to "localhost" when testing locally
+      } else {
+        console.error("Invalid or missing subdomain in the route:", currentRoute);
+        throw new Error("Subdomain is required and must be a valid string.");
+      }
+    }
+
+    console.log("Subdomain:", subdomain);
+
+    const sanitizedSubdomain = subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#");
+    const key = `${sanitizedSubdomain}_templates`;
+
+    const templates = await storage.get(key);
+    if (!templates) {
+      console.log(`No templates found for subdomain: ${sanitizedSubdomain}`);
+    }
+
+    return templates || [];
+  } catch (error) {
+    console.error("Error fetching templates:", error);
+    throw new Error("Failed to retrieve templates from storage.");
+  }
+});
+
+
+// Save tasks for the issue
+resolver.define("setTasks", async (req) => {
+  const { issueKey, tasks } = req.payload;
+  try {
+    console.log(`Saving tasks for issue ${issueKey}:`, tasks);
+    await storage.set(`${issueKey}_tasks`, tasks);
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving tasks for issue:", issueKey, error);
+    throw new Error("Failed to save tasks.");
+  }
+});
+
+// Save templates for the subdomain
+resolver.define("setTemplates", async (req) => {
+  try {
+    const currentRoute = req.payload?.currentRoute || "";
+    console.log("Current Route:", currentRoute);
+    
+    const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
+    let subdomain = match ? match[1] : null;
+
+    if (!subdomain) {
+      // Check for localhost or other cases
+      if (currentRoute.includes("localhost")) {
+        console.log("Running on localhost, no subdomain expected.");
+      } else {
+        throw new Error("Subdomain could not be extracted from the current route.");
+      }
+    }
+    
+    console.log("Subdomain:", subdomain);
+
+    const { templates } = req.payload;
+    console.log("Payload Templates:", templates);
+
+    if (!Array.isArray(templates)) {
+      throw new Error("Templates must be an array.");
+    }
+
+    const sanitizedSubdomain = subdomain ? subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#") : "localhost";
+    const key = `${sanitizedSubdomain}_templates`;
+
+    await storage.set(key, templates);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving templates:", error);
+    throw new Error("Failed to save templates.");
+  }
+});
+
+
+// Fetch user data
+resolver.define("getMyself", async () => {
+  try {
+    const response = await api.asUser().requestJira(route`/rest/api/3/myself`, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch user data:", response.status, response.statusText);
+      throw new Error(`Failed to fetch user data: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Fetched user data:", data);
+    return { data };
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw new Error("Failed to fetch user data.");
+  }
+});
+
+export const handler = resolver.getDefinitions();
