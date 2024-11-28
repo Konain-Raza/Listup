@@ -16,12 +16,39 @@ resolver.define("getTasks", async (req) => {
   }
 });
 
+resolver.define("getTicketDetails", async (req) => {
+  const { ticketId } = req.payload; // Extract the ticket ID from the request payload
+
+  try {
+    const response = await api
+      .asUser()
+      .requestJira(route`/rest/api/3/issue/${ticketId}`, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+    if (!response.ok) {
+      console.error(`Failed to fetch ticket details: ${response.statusText}`);
+      throw new Error("Failed to retrieve ticket details.");
+    }
+
+    const ticketDetails = await response.json(); // Parse the response JSON
+    console.log(`Fetched details for ticket ${ticketId}:`, ticketDetails);
+
+    return ticketDetails; // Return the resolved details
+  } catch (error) {
+    console.error("Error resolving ticket details:", ticketId, error);
+    throw new Error("Error occurred while fetching ticket details.");
+  }
+});
+
 // Fetch templates based on current route
 resolver.define("getTemplates", async (req) => {
   try {
     const currentRoute = req.payload?.currentRoute || "";
     console.log("Current Route:", currentRoute);
-    
+
     const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
     let subdomain = match ? match[1] : null;
 
@@ -30,14 +57,19 @@ resolver.define("getTemplates", async (req) => {
         console.log("Running on localhost, no subdomain expected.");
         subdomain = "localhost"; // Default to "localhost" when testing locally
       } else {
-        console.error("Invalid or missing subdomain in the route:", currentRoute);
+        console.error(
+          "Invalid or missing subdomain in the route:",
+          currentRoute
+        );
         throw new Error("Subdomain is required and must be a valid string.");
       }
     }
 
     console.log("Subdomain:", subdomain);
 
-    const sanitizedSubdomain = subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#");
+    const sanitizedSubdomain = subdomain
+      .trim()
+      .replace(/[^a-zA-Z0-9:._\s-#]/g, "#");
     const key = `${sanitizedSubdomain}_templates`;
 
     const templates = await storage.get(key);
@@ -51,7 +83,6 @@ resolver.define("getTemplates", async (req) => {
     throw new Error("Failed to retrieve templates from storage.");
   }
 });
-
 
 // Save tasks for the issue
 resolver.define("setTasks", async (req) => {
@@ -71,7 +102,7 @@ resolver.define("setTemplates", async (req) => {
   try {
     const currentRoute = req.payload?.currentRoute || "";
     console.log("Current Route:", currentRoute);
-    
+
     const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
     let subdomain = match ? match[1] : null;
 
@@ -80,10 +111,12 @@ resolver.define("setTemplates", async (req) => {
       if (currentRoute.includes("localhost")) {
         console.log("Running on localhost, no subdomain expected.");
       } else {
-        throw new Error("Subdomain could not be extracted from the current route.");
+        throw new Error(
+          "Subdomain could not be extracted from the current route."
+        );
       }
     }
-    
+
     console.log("Subdomain:", subdomain);
 
     const { templates } = req.payload;
@@ -93,7 +126,9 @@ resolver.define("setTemplates", async (req) => {
       throw new Error("Templates must be an array.");
     }
 
-    const sanitizedSubdomain = subdomain ? subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#") : "localhost";
+    const sanitizedSubdomain = subdomain
+      ? subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#")
+      : "localhost";
     const key = `${sanitizedSubdomain}_templates`;
 
     await storage.set(key, templates);
@@ -105,7 +140,6 @@ resolver.define("setTemplates", async (req) => {
   }
 });
 
-
 // Fetch user data
 resolver.define("getMyself", async () => {
   try {
@@ -116,8 +150,14 @@ resolver.define("getMyself", async () => {
     });
 
     if (!response.ok) {
-      console.error("Failed to fetch user data:", response.status, response.statusText);
-      throw new Error(`Failed to fetch user data: ${response.status} ${response.statusText}`);
+      console.error(
+        "Failed to fetch user data:",
+        response.status,
+        response.statusText
+      );
+      throw new Error(
+        `Failed to fetch user data: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();

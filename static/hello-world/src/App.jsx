@@ -3,7 +3,7 @@ import { view, invoke } from "@forge/bridge";
 import "./index.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Badge from "@atlaskit/badge";
+import TaskItem from "./components/TaskItem";
 
 const App = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const currentRoute = window.location.href; 
+        const currentRoute = window.location.href;
         const match = currentRoute.match(/^([a-zA-Z0-9-]+)\.atlassian/);
 
         let subdomain = null;
@@ -33,6 +33,11 @@ const App = () => {
         const context = await view.getContext();
         const currentIssueKey = context.extension.issue.id;
         if (!currentIssueKey) throw new Error("Issue key not found.");
+        const ticket = await invoke("getTicketDetails", {
+          ticketId: currentIssueKey,
+        });
+        console.log(ticket.fields);
+
         setIssueKey(currentIssueKey);
 
         const [storedTasks, userData] = await Promise.all([
@@ -40,14 +45,20 @@ const App = () => {
           invoke("getMyself"),
         ]);
 
+        console.log("Fetched Tasks:", storedTasks); // Debugging line to check tasks
         setTasks(storedTasks || []);
-        // if (!userData?.emailAddress) throw new Error("User email not found.");
 
         const allTemplates = await invoke("getTemplates", {
           currentRoute: window.location.href,
         });
 
-        setTemplates(Array.isArray(allTemplates) ? allTemplates : []);
+        const usedTemplates = storedTasks.map((task) => task.templateName);
+        console.log("Used Templates:", usedTemplates); // Debugging line to check usedTemplates
+
+        setTemplates({
+          all: allTemplates || [],
+          used: usedTemplates || [],
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error(error.message || "An error occurred while fetching data.");
@@ -58,6 +69,13 @@ const App = () => {
 
     fetchData();
   }, []);
+  const handleCopyTasks = () => {
+    const taskTexts = tasks.map((task) => `• ${task.text}`).join("\n");
+    navigator.clipboard.writeText(taskTexts).then(() => {
+      alert("Tasks copied to clipboard!");
+    });
+  };
+
   const handleClearAllTasks = async () => {
     if (tasks.length === 0) {
       toast.warning("No tasks to clear.");
@@ -74,6 +92,10 @@ const App = () => {
       }
 
       setTasks([]);
+      setTemplates((prevTemplates) => ({
+        ...prevTemplates,
+        used: [],
+      }));
 
       await invoke("setTasks", { issueKey, tasks: [] });
 
@@ -85,6 +107,15 @@ const App = () => {
   };
 
   const handleAddTask = async (template) => {
+    if (template.name) {
+      setTemplates((prevTemplates) => {
+        const updatedTemplates = { ...prevTemplates };
+        if (!updatedTemplates.used.includes(template.name)) {
+          updatedTemplates.used.push(template.name);
+        }
+        return updatedTemplates;
+      });
+    }
     if (!Array.isArray(template?.items) || template.items.length === 0) {
       toast.warning("No tasks in this template.");
       return;
@@ -109,15 +140,22 @@ const App = () => {
     setIsAddingTask(true);
 
     try {
-      const newTasks = template.items.map((item, i) => ({
-        text: item?.text || `Task ${i + 1}`,
-        status: inputStatus,
-        checked: inputStatus === "Done",
-      }));
+      const newTasks = template.items.map((item, i) => {
+        const task = {
+          id: generateUniqueId(),
+          text: item?.text || `Task ${i + 1}`,
+          status: inputStatus,
+          checked: inputStatus === "Done",
+          templateName: template.name || "Custom",
+        };
+
+        return task;
+      });
 
       setTasks((prevTasks) => [...newTasks, ...prevTasks]);
 
       await invoke("setTasks", { issueKey, tasks: [...newTasks, ...tasks] });
+
       toast.success("Tasks added successfully!");
     } catch (error) {
       console.error("Error while adding tasks:", error);
@@ -128,10 +166,12 @@ const App = () => {
       setIsAddingTask(false);
     }
   };
-
-  const handleStatusChange = async (index, status) => {
-    const updatedTasks = tasks.map((task, i) =>
-      i === index ? { ...task, status, checked: status === "Done" } : task
+  function generateUniqueId() {
+    return Date.now() + "-" + Math.floor(Math.random() * 1000); // Milliseconds + Random number
+  }
+  const handleStatusChange = async (id, status) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, status, checked: status === "Done" } : task
     );
     setTasks(updatedTasks);
 
@@ -141,6 +181,15 @@ const App = () => {
       console.error("Error updating task status:", error);
       toast.error("Failed to update status.");
     }
+  };
+
+  const handleDeleteTask = async (id) => {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks); // Update the tasks state
+    await invoke("setTasks", { issueKey, tasks: updatedTasks });
+    console.log(updatedTasks);
+
+    toast.success("Task deleted successfully");
   };
 
   const completedTasks = tasks.filter((task) => task.status === "Done").length;
@@ -154,10 +203,13 @@ const App = () => {
           id="default-modal"
           tabIndex="0"
           aria-hidden="true"
-          className="fixed inset-0 z-50 flex justify-center items-start transition-opacity duration-300"
-          style={{ height: "100vh", width: "100vw" }}
+          className="fixed inset-0 z-50 flex justify-center items-start bg-white"
+          style={{ height: "100vh", width: "100vw", overflow: "auto" }}
         >
-          <div className="p-5 rounded-lg max-w-md w-full border bg-white border-gray-300 shadow-2xl mt-4">
+          <div
+            className="relative w-full max-w-screen-lg mx-auto bg-white p-6"
+            style={{ minHeight: "100%" }}
+          >
             {!isViewModalOpen ? (
               <div className="">
                 <div className="flex justify-between items-center border-b pb-3 ">
@@ -183,16 +235,24 @@ const App = () => {
                   </button>
                 </div>
                 <div className="mt-4">
-                  {templates.map((template) => (
+                  {templates.all.map((template) => (
                     <div
                       key={template.id}
                       className="flex justify-between items-center mb-2"
                     >
-                      <h4>{template.name}</h4>
+                      <h4>
+                        {template.name}
+                        {templates.used.includes(template.name) && "Used"}
+                      </h4>
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleAddTask(template)}
-                          className="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2"
+                          disabled={templates.used.includes(template.name)}
+                          className={`focus:outline-none text-white ${
+                            templates.used.includes(template.name)
+                              ? "bg-gray-400"
+                              : "bg-blue-700 hover:bg-blue-800"
+                          } focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2`}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -354,6 +414,12 @@ const App = () => {
                   </svg>
                   Clear All
                 </button>
+                <button
+                  onClick={handleCopyTasks}
+                  className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600"
+                >
+                  Copy All Tasks
+                </button>
               </div>
             </div>
           </div>
@@ -378,7 +444,7 @@ const App = () => {
                 </label>
                 <select
                   onChange={(e) => setInputStatus(e.target.value)}
-                  className={`w-max border text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                  className={`w-max border text-sm rounded-lg p-2.5 `}
                 >
                   <option value="To Do">Select Status</option>
                   <option value="To Do">To Do</option>
@@ -447,65 +513,128 @@ const App = () => {
             </div>
           </form>
 
-          {tasks.map((task, index) => (
-            <div key={task.text + index}>
-              <div className="w-full flex gap-3 items-center m-2">
-                <input
-                  id="default-checkbox"
-                  type="checkbox"
-                  checked={task.checked}
-                  onChange={(e) =>
-                    handleStatusChange(
-                      index,
-                      e.target.checked ? "Done" : "To Do"
-                    )
-                  }
-                  value=""
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
+          {tasks
+            .filter((task) => task.templateName !== "Custom")
+            .reduce((acc, task) => {
+              const lastGroup = acc[acc.length - 1];
+              if (!lastGroup || lastGroup.templateName !== task.templateName) {
+                acc.push({ templateName: task.templateName, tasks: [task] });
+              } else {
+                lastGroup.tasks.push(task);
+              }
+              return acc;
+            }, [])
+            .map((group) => (
+              <div key={group.templateName}>
+                <div className="text-left">
+                  <h5 className="font-bold text-xl border-b pb-2 flex justify-between items-center">
+                    {group.templateName}
+                    <button
+                      onClick={() => {
+                        const isConfirmed = window.confirm(
+                          `Are you sure you want to delete all tasks with the template "${group.templateName}"?`
+                        );
 
-                <select
-                  className={`w-max border text-sm rounded-lg p-2.5 
-                    ${
-                      task.status === "To Do"
-                        ? "bg-gray-50 text-gray-900"
-                        : task.status === "In Progress"
-                        ? "bg-yellow-100 text-yellow-900"
-                        : task.status === "Done"
-                        ? "bg-green-100 text-green-900"
-                        : task.status === "Skipped"
-                        ? "bg-red-100 text-red-800"
-                        : ""
-                    } 
-                    dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                  value={task.status}
-                  onChange={(e) => handleStatusChange(index, e.target.value)}
-                >
-                  <option value="To Do" className="bg-white text-black">
-                    To Do
-                  </option>
-                  <option value="In Progress" className="bg-white text-black">
-                    In Progress
-                  </option>
-                  <option value="Done" className="bg-white text-black">
-                    Done
-                  </option>
-                  <option value="Skipped" className="bg-white text-black">
-                    Skipped
-                  </option>
-                </select>
+                        if (isConfirmed) {
+                          const updatedTasks = tasks.filter(
+                            (task) => task.templateName !== group.templateName
+                          );
+                          setTasks(updatedTasks);
+                          toast.success(
+                            `All tasks with template "${group.templateName}" deleted successfully`
+                          );
+                        } else {
+                          toast.info("Task deletion canceled.");
+                        }
+                      }}
+                      className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm"
+                    >
+                      Delete All
+                    </button>
+                  </h5>
+                </div>
 
-                <h5
-                  className={
-                    task.status === "Done" ? "line-through text-gray-500" : ""
-                  }
-                >
-                  {task.text}
-                </h5>
+                {group.tasks.map((task, index) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    handleStatusChange={handleStatusChange}
+                    handleDeleteTask={handleDeleteTask}
+                  />
+                  // <div
+                  //   key={task.text + index}
+                  //   className="w-full flex gap-3 items-center m-2 relative group"
+                  // >
+                  //   <input
+                  //     type="checkbox"
+                  //     checked={task.checked}
+                  //     onChange={(e) =>
+                  //       handleStatusChange(
+                  //         task.id,
+                  //         e.target.checked ? "Done" : "To Do"
+                  //       )
+                  //     }
+                  //     className="w-4 h-4"
+                  //   />
+                  //   <select
+                  //     value={task.status}
+                  //     onChange={(e) =>
+                  //       handleStatusChange(task.id, e.target.value)
+                  //     }
+                  //     className={`w-max border text-sm rounded-lg p-2.5
+                  //       ${
+                  //         task.status === "To Do"
+                  //           ? "bg-gray-50 text-gray-900"
+                  //           : task.status === "In Progress"
+                  //           ? "bg-yellow-100 text-yellow-900"
+                  //           : task.status === "Done"
+                  //           ? "bg-green-100 text-green-900"
+                  //           : task.status === "Skipped"
+                  //           ? "bg-red-100 text-red-800"
+                  //           : ""
+                  //       }`}
+                  //   >
+                  //     <option value="To Do">To Do</option>
+                  //     <option value="In Progress">In Progress</option>
+                  //     <option value="Done">Done</option>
+                  //     <option value="Skipped">Skipped</option>
+                  //   </select>
+                  //   <h5
+                  //     className={
+                  //       task.status === "Done"
+                  //         ? "line-through text-gray-500"
+                  //         : ""
+                  //     }
+                  //   >
+                  //     {task.text}
+                  //   </h5>
+                  //   <button
+                  //     onClick={() => handleDeleteTask(task.id)}
+                  //     className="bg-red-500 text-white px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  //   >
+                  //     Delete
+                  //   </button>
+                  // </div>
+                ))}
+                <hr />
               </div>
-              <hr />
-            </div>
-          ))}
+            ))}
+
+          {
+            <>
+              {tasks && <h3>Custom Tasks</h3>}
+              {tasks
+                .filter((task) => task.templateName === "Custom")
+                .map((task, index) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    handleStatusChange={handleStatusChange}
+                    handleDeleteTask={handleDeleteTask}
+                  />
+                ))}
+            </>
+          }
         </>
       )}
 
