@@ -36,7 +36,9 @@ const App = () => {
         const ticket = await invoke("getTicketDetails", {
           ticketId: currentIssueKey,
         });
-        console.log(ticket.fields);
+        console.log(ticket.fields.assignee.emailAddress);
+        console.log(ticket.fields.creator.emailAddress);
+
 
         setIssueKey(currentIssueKey);
 
@@ -70,7 +72,7 @@ const App = () => {
     fetchData();
   }, []);
   const handleCopyTasks = () => {
-    const taskTexts = tasks.map((task) => `• ${task.text}`).join("\n");
+    const taskTexts = tasks.map((task) => `• ${task.title}`).join("\n");
     navigator.clipboard.writeText(taskTexts).then(() => {
       alert("Tasks copied to clipboard!");
     });
@@ -122,7 +124,8 @@ const App = () => {
     }
 
     const isEmpty = template.items.some((item, i) => {
-      if (!item?.text) {
+      console.log(item)
+      if (!item?.title) {
         toast.error(`Task is missing text.`);
         return true;
       }
@@ -143,7 +146,7 @@ const App = () => {
       const newTasks = template.items.map((item, i) => {
         const task = {
           id: generateUniqueId(),
-          text: item?.text || `Task ${i + 1}`,
+          title: item?.title || `Task ${i + 1}`,
           status: inputStatus,
           checked: inputStatus === "Done",
           templateName: template.name || "Custom",
@@ -333,7 +336,7 @@ const App = () => {
                     <ul className="space-y-2">
                       {selectedTemplate.items.map((item, index) => (
                         <li key={index} className="text-sm text-gray-800">
-                          {item.text || `Item ${index + 1}`}
+                          {item.title || `Item ${index + 1}`}
                         </li>
                       ))}
                     </ul>
@@ -429,7 +432,7 @@ const App = () => {
             onSubmit={(e) => {
               e.preventDefault();
               handleAddTask({
-                items: [{ text: textInput }],
+                items: [{ title: textInput }],
                 name: "Custom",
               });
             }}
@@ -562,7 +565,7 @@ const App = () => {
                     handleDeleteTask={handleDeleteTask}
                   />
                   // <div
-                  //   key={task.text + index}
+                  //   key={task.title + index}
                   //   className="w-full flex gap-3 items-center m-2 relative group"
                   // >
                   //   <input
@@ -606,7 +609,7 @@ const App = () => {
                   //         : ""
                   //     }
                   //   >
-                  //     {task.text}
+                  //     {task.title}
                   //   </h5>
                   //   <button
                   //     onClick={() => handleDeleteTask(task.id)}

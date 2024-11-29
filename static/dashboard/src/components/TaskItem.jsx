@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 
-const TaskItem = ({ task, handleStatusChange, handleDeleteTask }) => {
+const TaskItem = ({ task, handleStatusChange, handleDeleteTask, handleTitleChange }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(task.title);
+
+  const handleSaveEdit = () => {
+    if (editedTitle.trim()) {
+      handleTitleChange(task.id, editedTitle.trim());
+      setIsEditing(false);
+    }
+  };
+
   return (
     <div
-      key={task.text + task.id}
+      key={task.id}
       className="w-full flex gap-3 items-center m-2 relative group"
     >
-      <input
-        type="checkbox"
-        checked={task.checked}
-        onChange={(e) =>
-          handleStatusChange(task.id, e.target.checked ? "Done" : "To Do")
-        }
-        className="w-4 h-4"
-      />
+      {/* Status Dropdown */}
       <select
         value={task.status}
         onChange={(e) => handleStatusChange(task.id, e.target.value)}
@@ -35,13 +38,30 @@ const TaskItem = ({ task, handleStatusChange, handleDeleteTask }) => {
         <option value="Done">Done</option>
         <option value="Skipped">Skipped</option>
       </select>
-      <h5
-        className={
-          task.status === "Done" ? "line-through text-gray-500" : ""
-        }
-      >
-        {task.text}
-      </h5>
+
+      {/* Editable Title */}
+      {isEditing ? (
+        <input
+          type="text"
+          value={editedTitle}
+          onChange={(e) => setEditedTitle(e.target.value)}
+          onBlur={handleSaveEdit} // Save when losing focus
+          onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()} // Save on Enter
+          className="p-1 border rounded text-sm flex-grow"
+          autoFocus
+        />
+      ) : (
+        <h5
+          onClick={() => setIsEditing(true)} // Start editing on click
+          className={`flex-grow cursor-pointer ${
+            task.status === "Done" ? "line-through text-gray-500" : ""
+          }`}
+        >
+          {task.title}
+        </h5>
+      )}
+
+      {/* Delete Button */}
       <button
         onClick={() => handleDeleteTask(task.id)}
         className="bg-red-500 text-white px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"

@@ -3,7 +3,7 @@ import React from "react";
 const TaskItem = ({ task, handleStatusChange, handleDeleteTask }) => {
   return (
     <div
-      key={task.text + task.id}
+      key={task.title + task.id}
       className="w-full flex gap-3 items-center m-2 relative group"
     >
       <input
@@ -40,7 +40,7 @@ const TaskItem = ({ task, handleStatusChange, handleDeleteTask }) => {
           task.status === "Done" ? "line-through text-gray-500" : ""
         }
       >
-        {task.text}
+        {task.title}
       </h5>
       <button
         onClick={() => handleDeleteTask(task.id)}
