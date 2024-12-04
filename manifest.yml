@@ -4,7 +4,7 @@ modules:
       resource: main
       resolver:
         function: resolver
-      viewportSize: xlarge
+      viewportSize: large
       title: Listup
       icon: https://raw.githubusercontent.com/Konain-Raza/Listup/d5fdacdc7cada03ce8b86e9732ae31bd79169fb7/objects.svg
   jira:projectPage:
@@ -12,6 +12,7 @@ modules:
       title: Listup
       resolver:
         function: resolver
+      layout: basic
       icon: https://raw.githubusercontent.com/Konain-Raza/Listup/d5fdacdc7cada03ce8b86e9732ae31bd79169fb7/objects.svg
       resource: project-page-main
   function:
@@ -27,6 +28,7 @@ permissions:
     - storage:app
     - read:jira-work
     - read:jira-user
+    - write:jira-work
   content:
     styles:
       - "unsafe-inline"

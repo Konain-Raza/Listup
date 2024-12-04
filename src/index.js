@@ -43,6 +43,53 @@ resolver.define("getTicketDetails", async (req) => {
   }
 });
 
+resolver.define("updateTicketDetails", async (req) => {
+  const { body, issueKey } = req.payload; // Extract the request body
+  console.log("Request Body:", body);
+  console.log("Issue Key:", issueKey);
+
+  if (!issueKey) {
+    throw new Error("Issue Key is missing in the request body");
+  }
+
+  try {
+    // const response = await api.asUser().requestJira(route`/rest/api/2/issue/{issueIdOrKey}`, {
+    //   method: 'PUT',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: bodyData
+    // });
+    
+    const response = await api
+      .asUser()
+      .requestJira(route`/rest/api/2/issue/${issueKey}`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body), // Ensure you're sending the correct ticket data
+      });
+
+    if (!response.ok) {
+      const responseText = await response.text(); // Read the body as text (or use .json() if you expect JSON)
+      console.error(
+        `Failed to update ticket details: ${response.status} ${response.statusText}`
+      );
+      console.error("Response body:", responseText);
+      throw new Error("Failed to update ticket details.");
+    }
+
+    console.log("Ticket updated successfully.");
+    return await response.json(); // If successful, return the updated ticket details
+  } catch (error) {
+    console.error("Error updating ticket details for", issueKey, error);
+    throw new Error("Error occurred while updating ticket details.");
+  }
+});
+
 // Fetch templates based on current route
 resolver.define("getTemplates", async (req) => {
   try {

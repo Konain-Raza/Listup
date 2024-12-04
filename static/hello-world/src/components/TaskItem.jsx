@@ -40,7 +40,7 @@ const TaskItem = ({ task, handleStatusChange, handleDeleteTask }) => {
           task.status === "Done" ? "line-through text-gray-500" : ""
         }
       >
-        {task.title}
+        {task.title || task.text}
       </h5>
       <button
         onClick={() => handleDeleteTask(task.id)}

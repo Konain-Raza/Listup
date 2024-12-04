@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import TaskItem from "./components/TaskItem";
 
 const App = () => {
+  const [allowedUsers, setAllowedUsers] = useState([])
+  const [completedTasksLength,setCompletedTasksLength] = useState(0)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,6 +18,8 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [progressValue, setProgressValue] = useState(0);
+  const [ticket, setTicket] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +42,10 @@ const App = () => {
         });
         console.log(ticket.fields.assignee.emailAddress);
         console.log(ticket.fields.creator.emailAddress);
+        
 
+        console.log(ticket)
+        setTicket(ticket.fields);
 
         setIssueKey(currentIssueKey);
 
@@ -71,6 +78,45 @@ const App = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const completedTasks = tasks.filter((task) => task.status === "Done").length;
+    setCompletedTasksLength(completedTasks);
+    const totalTasks = tasks.length;
+    const progress = totalTasks > 0 ? completedTasks / totalTasks : 0;
+    setProgressValue(progress);
+    
+    const updateTicketDetails = async () => {
+      try {
+        const result = await invoke("updateTicketDetails", { body: ticket, issueKey });
+        console.log('Updated Ticket:', result);
+      } catch (error) {
+        console.error('Error updating ticket:', error);
+      }
+    };
+    if (completedTasks === totalTasks && totalTasks > 0) {
+    if(ticket.status.name){
+      ticket.status.name = "Done";
+
+      // updateTicketDetails();
+    }
+    else{
+      console.log(ticket.status.name)
+    }
+
+      console.log(ticket);
+      // toast.success("All tasks are completed. AI has been reset.");
+    } else {
+      // ticket.status.name = "In Progress";
+      console.log(ticket);
+      // toast.info("Tasks are still in progress.");
+    }
+
+  
+  }, [tasks]);
+  
+  
+  
   const handleCopyTasks = () => {
     const taskTexts = tasks.map((task) => `• ${task.title}`).join("\n");
     navigator.clipboard.writeText(taskTexts).then(() => {
@@ -124,7 +170,7 @@ const App = () => {
     }
 
     const isEmpty = template.items.some((item, i) => {
-      console.log(item)
+      console.log(item);
       if (!item?.title) {
         toast.error(`Task is missing text.`);
         return true;
@@ -151,9 +197,10 @@ const App = () => {
           checked: inputStatus === "Done",
           templateName: template.name || "Custom",
         };
-
         return task;
       });
+
+      console.log(newTasks);
 
       setTasks((prevTasks) => [...newTasks, ...prevTasks]);
 
@@ -194,10 +241,6 @@ const App = () => {
 
     toast.success("Task deleted successfully");
   };
-
-  const completedTasks = tasks.filter((task) => task.status === "Done").length;
-  const totalTasks = tasks.length;
-  const progressValue = totalTasks > 0 ? completedTasks / totalTasks : 0;
 
   return (
     <div className="overflow-x-hidden">
@@ -243,65 +286,74 @@ const App = () => {
                       key={template.id}
                       className="flex justify-between items-center mb-2"
                     >
-                      <h4>
-                        {template.name}
-                        {templates.used.includes(template.name) && "Used"}
-                      </h4>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleAddTask(template)}
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`template-${template.id}`}
                           disabled={templates.used.includes(template.name)}
-                          className={`focus:outline-none text-white ${
+                          className="form-checkbox h-4 w-4"
+                        />
+                        <label
+                          htmlFor={`template-${template.id}`}
+                          className={`${
                             templates.used.includes(template.name)
-                              ? "bg-gray-400"
-                              : "bg-blue-700 hover:bg-blue-800"
-                          } focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2`}
+                              ? "text-gray-500"
+                              : "text-gray-800"
+                          }`}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="size-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedTemplate(template);
-                            setIsViewModalOpen(true);
-                          }}
-                          className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-3 py-2"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="size-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                            />
-                          </svg>
-                        </button>
+                          {template.name}{" "}
+                          {templates.used.includes(template.name) && (
+                            <span>(Used)</span>
+                          )}
+                        </label>
                       </div>
+                      <button
+                        onClick={() => {
+                          setSelectedTemplate(template);
+                          setIsViewModalOpen(true);
+                        }}
+                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-3 py-2"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                          />
+                        </svg>
+                      </button>
                     </div>
                   ))}
+                  <button
+                    onClick={() => {
+                      templates.all.forEach((template) => {
+                        const isChecked = document.querySelector(
+                          `#template-${template.id}`
+                        ).checked;
+                        if (
+                          isChecked &&
+                          !templates.used.includes(template.name)
+                        ) {
+                          handleAddTask(template); // Call handleAddTask for each selected template
+                        }
+                      });
+                    }}
+                    className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded"
+                  >
+                    Confirm Selection
+                  </button>
                 </div>
               </div>
             ) : (
@@ -326,7 +378,7 @@ const App = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         d="M6 18L18 6M6 6l12 12"
-                      />
+                      /> 
                     </svg>
                   </button>
                 </div>
@@ -373,7 +425,7 @@ const App = () => {
                 >
                   Completed Tasks
                   <span class="inline-flex items-center justify-center w-max p-1 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
-                    {`${completedTasks}/${totalTasks}`}
+                    {`${completedTasksLength}/${tasks.length}`}
                   </span>
                 </button>
                 <button
@@ -419,9 +471,22 @@ const App = () => {
                 </button>
                 <button
                   onClick={handleCopyTasks}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600"
+                  className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
                 >
-                  Copy All Tasks
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -533,19 +598,41 @@ const App = () => {
                   <h5 className="font-bold text-xl border-b pb-2 flex justify-between items-center">
                     {group.templateName}
                     <button
-                      onClick={() => {
-                        const isConfirmed = window.confirm(
-                          `Are you sure you want to delete all tasks with the template "${group.templateName}"?`
-                        );
+                      onClick={async () => {
+                        if (
+                          window.confirm(
+                            `Are you sure you want to delete all tasks with the template "${group.templateName}"?`
+                          )
+                        ) {
+                          try {
+                            const updatedTasks = tasks.filter(
+                              (task) => task.templateName !== group.templateName
+                            );
 
-                        if (isConfirmed) {
-                          const updatedTasks = tasks.filter(
-                            (task) => task.templateName !== group.templateName
-                          );
-                          setTasks(updatedTasks);
-                          toast.success(
-                            `All tasks with template "${group.templateName}" deleted successfully`
-                          );
+                            setTemplates((prev) => ({
+                              ...prev,
+                              used: prev.used.filter(
+                                (name) => name !== group.templateName
+                              ),
+                            }));
+
+                            await invoke("setTasks", {
+                              issueKey,
+                              tasks: updatedTasks,
+                            });
+                            console.log("Updated==> " + updatedTasks);
+                            setTasks(updatedTasks);
+
+                            toast.success(
+                              `All tasks with template "${group.templateName}" deleted successfully.`
+                            );
+                          } catch (error) {
+                            toast.error(
+                              `Failed to delete tasks: ${
+                                error.message || "Unknown error"
+                              }`
+                            );
+                          }
                         } else {
                           toast.info("Task deletion canceled.");
                         }
@@ -564,60 +651,6 @@ const App = () => {
                     handleStatusChange={handleStatusChange}
                     handleDeleteTask={handleDeleteTask}
                   />
-                  // <div
-                  //   key={task.title + index}
-                  //   className="w-full flex gap-3 items-center m-2 relative group"
-                  // >
-                  //   <input
-                  //     type="checkbox"
-                  //     checked={task.checked}
-                  //     onChange={(e) =>
-                  //       handleStatusChange(
-                  //         task.id,
-                  //         e.target.checked ? "Done" : "To Do"
-                  //       )
-                  //     }
-                  //     className="w-4 h-4"
-                  //   />
-                  //   <select
-                  //     value={task.status}
-                  //     onChange={(e) =>
-                  //       handleStatusChange(task.id, e.target.value)
-                  //     }
-                  //     className={`w-max border text-sm rounded-lg p-2.5
-                  //       ${
-                  //         task.status === "To Do"
-                  //           ? "bg-gray-50 text-gray-900"
-                  //           : task.status === "In Progress"
-                  //           ? "bg-yellow-100 text-yellow-900"
-                  //           : task.status === "Done"
-                  //           ? "bg-green-100 text-green-900"
-                  //           : task.status === "Skipped"
-                  //           ? "bg-red-100 text-red-800"
-                  //           : ""
-                  //       }`}
-                  //   >
-                  //     <option value="To Do">To Do</option>
-                  //     <option value="In Progress">In Progress</option>
-                  //     <option value="Done">Done</option>
-                  //     <option value="Skipped">Skipped</option>
-                  //   </select>
-                  //   <h5
-                  //     className={
-                  //       task.status === "Done"
-                  //         ? "line-through text-gray-500"
-                  //         : ""
-                  //     }
-                  //   >
-                  //     {task.title}
-                  //   </h5>
-                  //   <button
-                  //     onClick={() => handleDeleteTask(task.id)}
-                  //     className="bg-red-500 text-white px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  //   >
-                  //     Delete
-                  //   </button>
-                  // </div>
                 ))}
                 <hr />
               </div>
@@ -625,17 +658,22 @@ const App = () => {
 
           {
             <>
-              {tasks && <h3>Custom Tasks</h3>}
-              {tasks
-                .filter((task) => task.templateName === "Custom")
-                .map((task, index) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    handleStatusChange={handleStatusChange}
-                    handleDeleteTask={handleDeleteTask}
-                  />
-                ))}
+              {tasks.filter((task) => task.templateName === "Custom").length >
+                0 && (
+                <>
+                  <h3>Custom Tasks</h3>
+                  {tasks
+                    .filter((task) => task.templateName === "Custom")
+                    .map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        handleStatusChange={handleStatusChange}
+                        handleDeleteTask={handleDeleteTask}
+                      />
+                    ))}
+                </>
+              )}
             </>
           }
         </>
