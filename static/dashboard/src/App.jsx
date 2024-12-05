@@ -6,13 +6,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { invoke } from "@forge/bridge";
 import useStore from "./Store";
+import Settings from "./pages/Settings";
 
 const App = () => {
-  const { templates, setTemplates, setMe , me} = useStore();
+  const { templates, setTemplates, setMe, me } = useStore();
 
   const [editTemplate, setEditTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,13 +23,14 @@ const App = () => {
           email: userData?.data?.emailAddress || "No Email Provided",
           avatar: userData?.data?.avatarUrls?.["48x48"] || "default-avatar-url",
         });
-  
+
         const allTemplates = await invoke("getTemplates", {
           currentRoute: window.location.href,
         });
-  
+
         if (Array.isArray(allTemplates)) {
-          setTemplates(allTemplates);
+          setTemplates(allTemplates || []);
+          console.log(allTemplates);
         } else {
           throw new Error("Templates data is not an array.");
         }
@@ -39,13 +40,12 @@ const App = () => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   return (
-    <>
+    <div className=" dark:bg-darkBg h-max min-h-screen">
       <Routes>
         <Route
           path="/"
@@ -81,7 +81,7 @@ const App = () => {
         pauseOnHover
         theme="light"
       />
-    </>
+    </div>
   );
 };
 

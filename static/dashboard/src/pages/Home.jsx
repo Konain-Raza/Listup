@@ -1,53 +1,127 @@
-import React from "react";
+import React, { useState } from "react";
 import TemplateCard from "../components/TemplateCard";
 import { NavLink } from "react-router-dom";
-import Button from "@atlaskit/button/new";
-import SettingsIcon from "@atlaskit/icon/core/settings";
-import AddIcon from "@atlaskit/icon/core/add";
+import Drawer from "@atlaskit/drawer";
 import useStore from "../Store";
-import { toast } from "react-toastify"; // Don't forget to import toast
+import "../index.css";
+import "flowbite";
 
-const Home = ({ owner, loading, setEditTemplate, setTemplates }) => {
+const Home = ({ loading, setEditTemplate }) => {
   const { templates } = useStore();
-
-  const handleCreateTemplate = () => {
-    setEditTemplate(null);
-  };
-
+  const [open, setOpen] = useState(false);
   return (
-    <div className="w-full px-4">
-      <div className="w-full flex items-center justify-between py-4">
-        {/* Heading */}
-        <h1 className="text-3xl font-semibold">Templates</h1>
-
-        {/* Buttons Container */}
-        <div className="flex gap-4 my-4 ">
-          <NavLink to="/form" end>
-            <button
-              type="button"
-              class="px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    <>
+      <div
+        id="drawer-example"
+        class="fixed top-0 left-0 z-40 w-[25vw] h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white  dark:bg-darkBg"
+        tabindex="-1"
+        aria-labelledby="drawer-label"
+      >
+        <h5
+          id="drawer-label"
+          class="inline-flex text-4xl  items-center mb-4  font-semibold text-gray-500 dark:text-gray-400"
+        >
+          Settings
+        </h5>
+        <button
+          type="button"
+          data-drawer-hide="drawer-example"
+          aria-controls="drawer-example"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 end-2.5 flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          <svg
+            class="w-3 h-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            />
+          </svg>
+          <span class="sr-only">Close menu</span>
+        </button>
+        <div class="space-y-4 w-max">
+          <div class="w-full">
+            <label
+              for="toggle"
+              class="text-lg font-medium text-gray-700 dark:text-gray-200"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+              Template Settings
+            </label>
+            <div class="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
+              <span class="text-sm text-gray-600 dark:text-gray-400">
+                Allow every user to edit template
+              </span>
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" value="" class="sr-only peer" checked />
+                <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <label
+              for="toggle-2"
+              class="text-lg font-medium text-gray-700 dark:text-gray-200"
+            >
+              Checklist Settings
+            </label>
+            <div class="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
+              <span class="text-sm text-gray-600 dark:text-gray-400">
+                Allow every user to edit checklist
+              </span>
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" value="" class="sr-only peer" checked />
+                <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full px-4 dark:bg-[#1D2125] overflow-y-hidden scrollbar-hide ">
+        <div className="w-full flex items-center justify-between py-4">
+          <h1 className="text-3xl font-semibold dark:text-darkHeading">
+            Templates
+          </h1>
+
+          <div className="flex gap-4 my-4 ">
+            <NavLink to="/form" end>
+              <button
+                type="button"
+                className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              <span>Create a New Template</span>
-            </button>
-          </NavLink>
-          <NavLink to="/settings" end>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+                <span>Create a New Template</span>
+              </button>
+            </NavLink>
+
             <button
+              onClick={() => setOpen(true)}
               type="button"
-              class="px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-lg text-center"
+              data-drawer-target="drawer-example"
+              data-drawer-show="drawer-example"
+              aria-controls="drawer-example"
+              className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:hover:bg-gray-900 rounded-lg text-center"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -68,42 +142,41 @@ const Home = ({ owner, loading, setEditTemplate, setTemplates }) => {
                   d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                 />
               </svg>
-
               <span>Settings</span>
             </button>
-          </NavLink>
+          </div>
+        </div>
+
+        <div className="relative flex  flex-wrap py-2">
+          {loading ? (
+            <div className="flex flex-row items-center justify-center w-full">
+              <span className="loading loading-infinity loading-lg"></span>
+            </div>
+          ) : templates.length > 0 ? (
+            <div className="flex flex-row w-full justify-start items-center h-max flex-wrap gap-4 overflow-y-scroll scrollbar-hide">
+              {templates.map((template) => (
+                <TemplateCard
+                  key={template.id}
+                  template={template}
+                  setEditTemplate={setEditTemplate}
+                />
+              ))}
+              <NavLink to={"/form"}>
+                <div className="dark:bg-[#1C2B41]  bg-blue-100 w-[30rem] border dark:border-none rounded-lg h-[250px]">
+                  <div className="py-7 px-8 flex flex-col h-full justify-center items-center">
+                    <button className="dark:text-[#579DFF] text-blue-700 text-2xl py-2 px-4 rounded-lg no-underline">
+                      + Add a New Template
+                    </button>
+                  </div>
+                </div>
+              </NavLink>
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">No templates found</div>
+          )}
         </div>
       </div>
-
-      <div className="relative flex min-h-screen flex-wrap bg-gray-50 py-2">
-        {loading ? (
-          <div className="flex flex-row items-center justify-center w-full">
-            <span className="loading loading-infinity loading-lg"></span>
-          </div>
-        ) : templates.length > 0 ? (
-          <div className="flex flex-row w-full justify-start items-center h-max flex-wrap gap-4">
-            {templates.map((template) => (
-              <TemplateCard
-                key={template.id}
-                template={template}
-                setEditTemplate={setEditTemplate}
-              />
-            ))}
-            <NavLink to={"/form"}>
-              <div className="  bg-blue-100 w-[30rem] border rounded-lg h-[270px]">
-                <div className="py-7 px-8 flex flex-col h-full justify-center items-center">
-                  <button className="text-blue-700 text-2xl py-2 px-4 rounded-lg no-underline">
-                    + Add a New Template
-                  </button>
-                </div>
-              </div>
-            </NavLink>
-          </div>
-        ) : (
-          <div className="text-center text-gray-500">No templates found</div>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 

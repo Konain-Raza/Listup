@@ -7,13 +7,23 @@ import { invoke } from "@forge/bridge";
 const TemplateCard = ({ template, setEditTemplate }) => {
   const { me, setTemplates, templates } = useStore();
   const navigate = useNavigate();
+  console.log("Templ===>", template);
+  console.log("Me===>", me);
 
   const handleEditTemplate = (template) => {
-    if (template.owner.email === me?.email) {
+    if (template?.owner?.email === me?.email) {
       setEditTemplate(template);
       navigate("/form", { state: { template } });
     } else {
       toast.error("You do not have permission to edit this template.");
+    }
+  };
+  const handleViewTemplate = (template) => {
+    if (template?.owner?.email !== me?.email) {
+      setEditTemplate(template);
+      navigate("/form", { state: { viewTemplate: template } });
+    } else {
+      toast.error("You can direclty edit this template.");
     }
   };
 
@@ -46,16 +56,16 @@ const TemplateCard = ({ template, setEditTemplate }) => {
   };
 
   return (
-    <div className="w-[30rem] border rounded-lg h-[270px] bg-white">
+    <div className="w-[30rem] dark:border-[#A6C5E229] border rounded-lg h-[250px] bg-white dark:bg-darkBg ">
       <div className="px-10 py-7 flex flex-col justify-between items-start h-full w-full">
         <div class="w-full mt-1 flex justify-between items-center ">
-          <h1 class="text-2xl font-semibold">
+          <h1 class="text-2xl font-semibold dark:text-white">
             {template.name && template.name.length > 20
               ? template.name.slice(0, 20) + "..."
               : template.name}
           </h1>
-          <div class="rounded-lg px-3 py-1 bg-[#E9F2FF]">
-            <span class="text-blue-700 text-base">
+          <div class="rounded-lg px-3 py-1 bg-[#E9F2FF] dark:bg-[#1C2B41]">
+            <span class="text-blue-700 text-base dark:text-[#579DFF]">
               Total Items: {template.items.length}
             </span>
           </div>
@@ -66,45 +76,51 @@ const TemplateCard = ({ template, setEditTemplate }) => {
             template.description.length > 0 ? "flex-col" : "flex-col-reverse"
           }`}
         >
-          <p class="text-gray-600 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
+          <p class="text-gray-600 dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
             {template.description.length > 100
               ? template.description.slice(0, 120)
               : template.description || ""}
           </p>
 
           <div class="mt-2 text-base">
-            <span class="text-gray-400">Created by:</span>
-            <span>
-              {template.owner.name}
-              {template.owner.email === me.email && "(You)"}
+            <span class="text-gray-400 ">Created by: </span>
+            <span className="dark:text-white">
+              {template.owner.name || "Konain"}
+              {template?.owner?.email === me.email && "(You)"}
             </span>
           </div>
         </div>
 
         <div class="mt-4 w-full flex h-max justify-between items-center">
           <div class="w-max flex gap-1">
-            <button class="px-4 py-2 text-base font-medium  text-black bg-gray-100 hover:bg-gray-300">
-              View
-            </button>
-            <button
-              className={`px-4 py-2 text-base font-medium ${
-                me.email === template.owner.email
-                  ? "text-black bg-gray-100 hover:bg-gray-300"
-                  : "text-gray-300 bg-gray-50 cursor-not-allowed"
-              }`}
-              disabled={me.email !== template.owner.email}
-              onClick={() => handleEditTemplate(template)}
-            >
-              Edit
-            </button>
+            {template?.owner?.email === me.email ? (
+              <button
+                className={`dark:bg-[#A1BDD914] rounded-md dark:text-white  px-8 py-2 text-base font-medium ${
+                  me.email === template?.owner?.email
+                    ? "text-black bg-gray-100 hover:bg-gray-300"
+                    : "text-gray-300 bg-gray-50 cursor-not-allowed"
+                }`}
+                disabled={me.email !== template?.owner?.email}
+                onClick={() => handleEditTemplate(template)}
+              >
+                Edit
+              </button>
+            ) : (
+              <button
+                class="px-8 dark:bg-[#A1BDD914] rounded-md py-2 text-base font-medium  text-black bg-gray-100 hover:bg-gray-300"
+                onClick={() => handleViewTemplate(template)}
+              >
+                View
+              </button>
+            )}
           </div>
           <button
-            className={`px-4 py-2 text-base flex justify-center gap-2 font-medium ${
-              me.email === template.owner.email
-                ? "text-red-600 hover:text-red-700"
+            className={` py-2 text-base flex justify-center gap-2 font-medium ${
+              me.email === template?.owner?.email
+                ? "text-red-600 hover:text-red-700 dark:text-[#F87168]"
                 : "text-gray-400 cursor-not-allowed"
             }`}
-            disabled={me.email !== template.owner.email}
+            disabled={me.email !== template?.owner?.email}
             onClick={() => handleDeleteTemplate(template)}
           >
             <svg
