@@ -61,14 +61,14 @@ resolver.define("updateTicketDetails", async (req) => {
     //   },
     //   body: bodyData
     // });
-    
+
     const response = await api
       .asUser()
       .requestJira(route`/rest/api/2/issue/${issueKey}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(body), // Ensure you're sending the correct ticket data
       });
@@ -144,6 +144,42 @@ resolver.define("setTasks", async (req) => {
   }
 });
 
+// resolver.define("getSettings", async (req) => {
+//   try{
+//   const currentRoute = req.payload?.currentRoute || "";
+//   const currentSettings = req.payload?.currentSettings;
+//   console.log("Current Route:", currentRoute);
+//   const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
+//   let subdomain = match ? match[1] : null;
+
+//   if (!subdomain) {
+//     if (currentRoute.includes("localhost")) {
+//       console.log("Running on localhost, no subdomain expected.");
+//       subdomain = "localhost"; // Default to "localhost" when testing locally
+//     } else {
+//       console.error("Invalid or missing subdomain in the route:", currentRoute);
+//       throw new Error("Subdomain is required and must be a valid string.");
+//     }
+//   }
+//   console.log("Subdomain:", subdomain);
+
+//   const sanitizedSubdomain = subdomain
+//     .trim()
+//     .replace(/[^a-zA-Z0-9:._\s-#]/g, "#");
+//   const key = `${sanitizedSubdomain}_settings`;
+
+//   const settings = await storage.get(key);
+//   if (!settings) {
+//     console.log(`No settings found for subdomain: ${sanitizedSubdomain}`);
+//   }
+
+//   return settings || [];
+// }
+// catch (error) {
+//   console.error("Error fetching settings:", error);
+//   throw new Error("Failed to retrieve settings from storage.");
+// }
+// });
 // Save templates for the subdomain
 resolver.define("setTemplates", async (req) => {
   try {
@@ -184,6 +220,43 @@ resolver.define("setTemplates", async (req) => {
   } catch (error) {
     console.error("Error saving templates:", error);
     throw new Error("Failed to save templates.");
+  }
+});
+
+resolver.define("getSettings", async (req) => {
+  try {
+    const currentRoute = req.payload?.currentRoute || "";
+    const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
+    let subdomain = match ? match[1] : currentRoute.includes("localhost") ? "localhost" : null;
+
+    if (!subdomain) throw new Error("Subdomain is required and must be a valid string.");
+
+    const key = `${subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#")}_settings`;
+    const settings = await storage.get(key);
+
+    return settings || [];
+  } catch {
+    throw new Error("Failed to retrieve settings from storage.");
+  }
+});
+
+resolver.define("setSettings", async (req) => {
+  try {
+    const currentRoute = req.payload?.currentRoute || "";
+    const newSettings = req.payload?.newSettings;
+    if (!newSettings) throw new Error("No settings provided to save.");
+
+    const match = currentRoute.match(/^https?:\/\/([a-zA-Z0-9.-]+)\.atlassian/);
+    let subdomain = match ? match[1] : currentRoute.includes("localhost") ? "localhost" : null;
+
+    if (!subdomain) throw new Error("Subdomain is required and must be a valid string.");
+
+    const key = `${subdomain.trim().replace(/[^a-zA-Z0-9:._\s-#]/g, "#")}_settings`;
+    await storage.set(key, newSettings);
+
+    return { success: true };
+  } catch {
+    throw new Error("Failed to save settings to storage.");
   }
 });
 

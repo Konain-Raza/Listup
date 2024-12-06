@@ -9,8 +9,8 @@ import useStore from "./Store";
 import Settings from "./pages/Settings";
 
 const App = () => {
-  const { templates, setTemplates, setMe, me } = useStore();
-
+  const { templates, setTemplates, setMe, me, setSettings, settings } =
+    useStore();
   const [editTemplate, setEditTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,11 +18,22 @@ const App = () => {
     const fetchData = async () => {
       try {
         const userData = await invoke("getMyself");
+        console.log(userData?.data?.groups?.items)
         setMe({
           name: userData?.data?.displayName || "Unknown User",
           email: userData?.data?.emailAddress || "No Email Provided",
           avatar: userData?.data?.avatarUrls?.["48x48"] || "default-avatar-url",
         });
+        const currentSettings = await invoke("getSettings", {
+          currentRoute: window.location.href,
+        });
+
+        if (currentSettings && typeof currentSettings === "object") {
+          setSettings(currentSettings);
+          console.log("Fetched settings:", currentSettings);
+        } else {
+          throw new Error("Settings data is invalid or missing.");
+        }
 
         const allTemplates = await invoke("getTemplates", {
           currentRoute: window.location.href,
@@ -71,7 +82,7 @@ const App = () => {
         />
       </Routes>
       <ToastContainer
-        position="top-right"
+        position="top-center"
         autoClose={5000}
         hideProgressBar={false}
         closeOnClick

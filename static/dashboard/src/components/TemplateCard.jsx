@@ -5,10 +5,11 @@ import useStore from "../Store";
 import { invoke } from "@forge/bridge";
 
 const TemplateCard = ({ template, setEditTemplate }) => {
-  const { me, setTemplates, templates } = useStore();
+  const { me, setTemplates, templates, settings } = useStore();
   const navigate = useNavigate();
   console.log("Templ===>", template);
   console.log("Me===>", me);
+  console.log(settings);
 
   const handleEditTemplate = (template) => {
     if (template?.owner?.email === me?.email) {
@@ -25,6 +26,7 @@ const TemplateCard = ({ template, setEditTemplate }) => {
     } else {
       toast.error("You can direclty edit this template.");
     }
+    navigate("/form", { state: { viewTemplate: template } });
   };
 
   const handleDeleteTemplate = async (template) => {
@@ -92,28 +94,29 @@ const TemplateCard = ({ template, setEditTemplate }) => {
         </div>
 
         <div class="mt-4 w-full flex h-max justify-between items-center">
-          <div class="w-max flex gap-1">
-            {template?.owner?.email === me.email ? (
-              <button
-                className={`dark:bg-[#A1BDD914] rounded-md dark:text-white  px-8 py-2 text-base font-medium ${
-                  me.email === template?.owner?.email
-                    ? "text-black bg-gray-100 hover:bg-gray-300"
-                    : "text-gray-300 bg-gray-50 cursor-not-allowed"
-                }`}
-                disabled={me.email !== template?.owner?.email}
-                onClick={() => handleEditTemplate(template)}
-              >
-                Edit
-              </button>
-            ) : (
-              <button
-                class="px-8 dark:bg-[#A1BDD914] rounded-md py-2 text-base font-medium  text-black bg-gray-100 hover:bg-gray-300"
-                onClick={() => handleViewTemplate(template)}
-              >
-                View
-              </button>
-            )}
+          <div className="w-max flex gap-1">
+            <button
+              className={`dark:bg-[#A1BDD914] rounded-md px-8 py-2 text-base font-medium 
+      ${
+        me.email === template?.owner?.email || settings?.allowTemplateEdit
+          ? "text-black bg-gray-100 hover:bg-gray-300"
+          : "text-gray-300 bg-gray-50 cursor-not-allowed"
+      } 
+      dark:text-white dark:hover:bg-gray-900`}
+              onClick={() =>
+                me.email === template?.owner?.email ||
+                settings?.allowTemplateEdit
+                  ? handleEditTemplate(template)
+                  : handleViewTemplate(template)
+              }
+            >
+              {me.email === template?.owner?.email ||
+              settings?.allowTemplateEdit
+                ? "Edit"
+                : "View"}
+            </button>
           </div>
+
           <button
             className={` py-2 text-base flex justify-center gap-2 font-medium ${
               me.email === template?.owner?.email

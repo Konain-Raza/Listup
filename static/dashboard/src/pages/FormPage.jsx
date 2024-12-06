@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@forge/bridge";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { NavLink, useLocation } from "react-router-dom";
 import useStore from "../Store";
 import "../index.css";
@@ -56,6 +56,11 @@ function FormPage() {
   };
   const handleSave = async () => {
     setIsSaving(true);
+    if(!templateName && newTemplate.items.length > 0) {
+      toast.error("Please provide a template name and at least one item.");
+
+    }
+
 
     if (templateName && newTemplate.items.length > 0) {
       const templateToSave = {
@@ -111,7 +116,6 @@ function FormPage() {
       }
     } else {
       console.error("Template name or items missing.");
-      toast.error("Please provide a template name and at least one item.");
       setIsSaving(false);
     }
   };
@@ -207,7 +211,7 @@ function FormPage() {
               disabled={
                 !templateName || saving || newTemplate.items.length === 0
               }
-            className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+              className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +235,6 @@ function FormPage() {
             <button
               type="button"
               className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:hover:bg-gray-900 rounded-lg text-center"
-
             >
               <span>Go Back</span>
             </button>
@@ -243,11 +246,11 @@ function FormPage() {
           <div className="my-3">
             <label
               htmlFor="description"
-              className="block text-xl font-semibold text-gray-700 mb-1"
+              className="block text-xl font-semibold dark:text-white text-gray-700 mb-1"
             >
               Description
             </label>
-            <p className="text-gray-600 text-base leading-relaxed mb-3">
+            <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed mb-3">
               {viewTemplate.description || "No description provided."}
             </p>
           </div>
@@ -305,7 +308,7 @@ function FormPage() {
 
           {/* Add List Item Form */}
           <form
-            className="border-t pt-3 flex flex-col my-6 relative"
+            className="border-t  dark:border-[#A6C5E229] pt-10 mt-8 flex flex-col my-6 relative"
             onSubmit={handleAddItem}
           >
             <label
@@ -342,32 +345,63 @@ function FormPage() {
           </form>
         </div>
       )}
-      {newTemplate.items.length > 0 && (
-        <div className="w-full h-full ">
-          <table className="w-max table-auto border-collapse h-auto ">
-            <thead>
-              <tr className="row rounded-md">
-                <th colSpan={2} className="ml-2 dark:text-[#626F86] ">
-                  List Item
-                </th>
-                <th className="ml-2 dark:text-[#626F86] ">Status</th>
-                <th className="ml-2 dark:text-[#626F86] ">Action</th>
+      <div className="w-full h-full">
+        <table className=" w-max table-fixed border-collapse dark:border-[#A6C5E229] h-auto">
+          <thead>
+            <tr className="row rounded-md">
+              <th
+              // colSpan={2}
+                // colSpan={viewTemplate !== null ? 2 : undefined}
+                className="ml-2 dark:text-[#626F86]"
+              >
+                List Item
+              </th>
+              <th className="ml-2 dark:text-[#626F86]">Status</th>
+              {viewTemplate === null && (
+                <th className="ml-2 dark:text-[#626F86]">Action</th>
+              )}
+            </tr>
+          </thead>
+          <tbody className="dark:border-[#A6C5E229]">
+            {newTemplate.items.length > 0 ||
+            (viewTemplate?.items && viewTemplate.items.length > 0) ? (
+              // Rendering tasks from either newTemplate or viewTemplate
+              (newTemplate.items.length > 0
+                ? newTemplate.items
+                : viewTemplate.items
+              ).map((task, index) => (
+                // <tr key={task.id || index}>
+                  <TaskItem
+                    isViewable={viewTemplate !== null}
+                    key={task.id || index}
+                    task={task}
+                    handleStatusChange={handleStatusChange}
+                    handleDeleteTask={handleDeleteTask}
+                    handleTitleChange={handleTitleChange}
+                  />
+                // </tr>
+              ))
+            ) : (
+              <tr className="row">
+                <td colSpan={4} className="text-center dark:text-[#626F86]">
+                  No items available
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {newTemplate.items.map((task, index) => (
-                <TaskItem
-                  key={task.id || index}
-                  task={task}
-                  handleStatusChange={handleStatusChange}
-                  handleDeleteTask={handleDeleteTask}
-                  handleTitleChange={handleTitleChange}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            )}
+          </tbody>
+        </table>
+      </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

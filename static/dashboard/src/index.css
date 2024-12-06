@@ -13,13 +13,14 @@
 
 .row {
   border: 1px solid rgba(128, 128, 128, 0.384);
+  /* width: 900px; */
 }
 
 .row td,
 .row th {
   border-right: 1px solid rgba(128, 128, 128, 0.384);
   padding: 15px;
-  width: auto; /* You can use 'auto' instead of 'max-content' for width */
+  /* width: auto; You can use 'auto' instead of 'max-content' for width */
 }
 
 .row td:last-child {
@@ -30,13 +31,13 @@
 .row td:first-child {
   padding-left: 15px !important;
   /* padding: 0px !important; */
-  min-width: 300px;
+  /* min-width: 300px; */
 }
 
 .row th:first-child {
   padding-left: 15px !important;
   /* padding: 0px !important; */
-  min-width: 300px;
+  /* min-width: 300px; */
 }
 
 .row th:last-child {
@@ -45,3 +46,7 @@
     /* min-width: 300px; */
   }
   
+
+.row th{
+  /* width: 300px; */
+}

@@ -1,89 +1,21 @@
 import React, { useState } from "react";
 import TemplateCard from "../components/TemplateCard";
 import { NavLink } from "react-router-dom";
-import Drawer from "@atlaskit/drawer";
+import Drawer from "../components/Drawer";
 import useStore from "../Store";
 import "../index.css";
 import "flowbite";
 
 const Home = ({ loading, setEditTemplate }) => {
   const { templates } = useStore();
-  const [open, setOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen((prevState) => !prevState);
+  };
   return (
     <>
-      <div
-        id="drawer-example"
-        class="fixed top-0 left-0 z-40 w-[25vw] h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white  dark:bg-darkBg"
-        tabindex="-1"
-        aria-labelledby="drawer-label"
-      >
-        <h5
-          id="drawer-label"
-          class="inline-flex text-4xl  items-center mb-4  font-semibold text-gray-500 dark:text-gray-400"
-        >
-          Settings
-        </h5>
-        <button
-          type="button"
-          data-drawer-hide="drawer-example"
-          aria-controls="drawer-example"
-          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 end-2.5 flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          <svg
-            class="w-3 h-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 14"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-            />
-          </svg>
-          <span class="sr-only">Close menu</span>
-        </button>
-        <div class="space-y-4 w-max">
-          <div class="w-full">
-            <label
-              for="toggle"
-              class="text-lg font-medium text-gray-700 dark:text-gray-200"
-            >
-              Template Settings
-            </label>
-            <div class="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
-              <span class="text-sm text-gray-600 dark:text-gray-400">
-                Allow every user to edit template
-              </span>
-              <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" value="" class="sr-only peer" checked />
-                <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          </div>
-
-          <div class="w-full">
-            <label
-              for="toggle-2"
-              class="text-lg font-medium text-gray-700 dark:text-gray-200"
-            >
-              Checklist Settings
-            </label>
-            <div class="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
-              <span class="text-sm text-gray-600 dark:text-gray-400">
-                Allow every user to edit checklist
-              </span>
-              <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" value="" class="sr-only peer" checked />
-                <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Drawer isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
 
       <div className="w-full px-4 dark:bg-[#1D2125] overflow-y-hidden scrollbar-hide ">
         <div className="w-full flex items-center justify-between py-4">
@@ -116,7 +48,7 @@ const Home = ({ loading, setEditTemplate }) => {
             </NavLink>
 
             <button
-              onClick={() => setOpen(true)}
+            onClick={toggleDrawer} 
               type="button"
               data-drawer-target="drawer-example"
               data-drawer-show="drawer-example"
