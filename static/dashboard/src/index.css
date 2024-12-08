@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.row {
+  border: 1px solid rgba(128, 128, 128, 0.384);
+  /* width: 900px; */
+}
+
+.row td,
+.row th {
+  border-right: 1px solid rgba(128, 128, 128, 0.384);
+  padding: 15px;
+  /* width: auto; You can use 'auto' instead of 'max-content' for width */
+}
+
+.row td:last-child {
+  padding-right: 15px;
+  border-right: none;
+}
+
+.row td:first-child {
+  padding-left: 15px !important;
+  /* padding: 0px !important; */
+  /* min-width: 300px; */
+}
+
+.row th:first-child {
+  padding-left: 15px !important;
+  /* padding: 0px !important; */
+  /* min-width: 300px; */
+}
+
+.row th:last-child {
+    padding-right: 15px !important;
+    /* padding: 0px !important; */
+    /* min-width: 300px; */
+  }
+  
+
+.row th{
+  /* width: 300px; */
+}

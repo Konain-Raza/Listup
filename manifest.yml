@@ -1,0 +1,39 @@
+modules:
+  jira:issuePanel:
+    - key: checklist-2-0-hello-world-panel
+      resource: main
+      resolver:
+        function: resolver
+      viewportSize: large
+      title: Listup
+      icon: https://raw.githubusercontent.com/Konain-Raza/Listup/d5fdacdc7cada03ce8b86e9732ae31bd79169fb7/objects.svg
+  jira:projectPage:
+    - key: project-checklist-page
+      title: Listup
+      resolver:
+        function: resolver
+      layout: basic
+      icon: https://raw.githubusercontent.com/Konain-Raza/Listup/d5fdacdc7cada03ce8b86e9732ae31bd79169fb7/objects.svg
+      resource: project-page-main
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: static/hello-world/build
+  - key: project-page-main
+    path: static/dashboard/build
+permissions:
+  scopes:
+    - storage:app
+    - read:jira-work
+    - read:jira-user
+    - write:jira-work
+  content:
+    styles:
+      - "unsafe-inline"
+
+app:
+  runtime:
+    name: nodejs20.x
+  id: ari:cloud:ecosystem::app/9125c0e2-a2fd-47c1-b164-0523cafa44ca
