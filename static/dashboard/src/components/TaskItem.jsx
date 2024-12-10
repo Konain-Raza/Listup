@@ -21,7 +21,7 @@ const TaskItem = ({
 
   return (
     <tr key={task.id} className="row">
-      <td className="min-w-[300px] max-w-max">
+      <td className="min-w-[370px] max-w-max">
         {isEditing ? (
           <input
             type="text"
@@ -57,7 +57,7 @@ const TaskItem = ({
 
       {/* Conditionally render the delete button if isViewable is false */}
       {!isViewable && (
-        <td className="w-[100px]">
+        <td className="w-[100px] text-center">
           <button onClick={() => handleDeleteTask(task.id)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"

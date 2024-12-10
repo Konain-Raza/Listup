@@ -1,78 +1,100 @@
 import React, { useState, useEffect } from "react";
 import { invoke } from "@forge/bridge";
 import useStore from "../Store";
+import "flowbite";
 
 const Drawer = ({ isDrawerOpen, toggleDrawer }) => {
   const { settings, setSettings: updateStoreSettings } = useStore();
-  
+
   const [localSettings, setLocalSettings] = useState({
     allowTemplateEdit: false,
     allowChecklistEdit: false,
   });
 
-  // Fetch initial settings when the component mounts
   useEffect(() => {
-    setLocalSettings(settings);
+    if (Array.isArray(settings) || Object.keys(settings).length === 0) {
+      setLocalSettings({
+        allowTemplateEdit: false,
+        allowChecklistEdit: false,
+      });
+    } else {
+      setLocalSettings(settings);
+    }
   }, [settings]);
 
-  // Function to save settings to the database
   const setSettings = async (newSettings) => {
     try {
       const response = await invoke("setSettings", {
-        currentRoute: window.location.href,
         newSettings,
       });
       console.log("Settings saved:", response);
-      
-      // Update the settings in the Zustand store
       updateStoreSettings(newSettings);
     } catch (error) {
       console.error("Error saving settings:", error);
     }
   };
 
-  // Handler for toggle change
   const handleToggleChange = (key) => {
     const updatedSettings = { ...localSettings, [key]: !localSettings[key] };
     setLocalSettings(updatedSettings);
-
-    // Directly save the updated settings and update the store
     setSettings(updatedSettings);
   };
 
   return (
-<div>
-  {isDrawerOpen && (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-30"
-      onClick={toggleDrawer} // Clicking the overlay closes the drawer
-    ></div>
-  )}
+    <div>
+      {isDrawerOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={toggleDrawer}
+        ></div>
+      )}
 
-  <div
-    id="drawer-example"
-    className={`fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform transform ${
-      isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-    } bg-white dark:bg-darkBg w-full sm:w-[25vw]`} // Full width on small screens, 25vw on larger screens
-    tabindex="-1"
-    aria-labelledby="drawer-label"
-  >
-        <h5
-          id="drawer-label"
-          className="inline-flex text-4xl items-center mb-4 font-semibold text-gray-500 dark:text-gray-400"
-        >
-          {"<- Settings"}
-        </h5>
+      <div
+        id="drawer-example"
+        className={`fixed top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform transform ${
+          isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+        } bg-white dark:bg-darkBg w-[350px]`}
+        tabindex="-1"
+        aria-labelledby="drawer-label"
+      >
+        <div className="w-full inline-flex  justify-items-start gap-6 items-center">
+          <button
+            className="flex items-center justify-center  dark:text-gray-400"
+            onClick={toggleDrawer}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+              />
+            </svg>
+          </button>
+
+          <h5
+            id="drawer-label"
+            className="inline-flex text-3xl items-center  font-semibold text-gray-500 dark:text-gray-400"
+          >
+            {"Settings"}
+          </h5>
+        </div>
 
         <div className="space-y-4 w-max">
-          <div className="w-full">
+          <div className="w-full my-5">
             <label
               htmlFor="toggle"
               className="text-lg font-medium text-gray-700 dark:text-gray-200"
             >
               Template Settings
             </label>
-            <div className="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
+            <div className="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-lg rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 Allow every user to edit template
               </span>
@@ -95,7 +117,7 @@ const Drawer = ({ isDrawerOpen, toggleDrawer }) => {
             >
               Checklist Settings
             </label>
-            <div className="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-xs rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
+            <div className="flex items-center gap-4 justify-between border p-4 mt-2 w-full max-w-lg rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 Allow every user to edit checklist
               </span>

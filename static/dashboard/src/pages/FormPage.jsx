@@ -10,7 +10,6 @@ function FormPage() {
   const { me, templates, setTemplates } = useStore();
   const location = useLocation();
   const [template, setTemplate] = useState(null);
-  const [viewTemplate, setViewTemplate] = useState(null);
 
   const [templateName, setTemplateName] = useState("");
   const [item, setItem] = useState("");
@@ -24,10 +23,7 @@ function FormPage() {
   const [saving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const { template, viewTemplate } = location.state || {};
-    if (viewTemplate) {
-      setViewTemplate(viewTemplate);
-    }
+    const { template } = location.state || {};
 
     if (template) {
       setTemplate(template);
@@ -56,35 +52,51 @@ function FormPage() {
   };
   const handleSave = async () => {
     setIsSaving(true);
-    if(!templateName && newTemplate.items.length > 0) {
+    console.log(" called");
+
+    // Check if template name or items are missing
+    if (!templateName || newTemplate.items.length === 0) {
+      console.log(" in the ocndition");
       toast.error("Please provide a template name and at least one item.");
-
+      setIsSaving(false); // Stop saving process if validation fails
+      return; // Exit early to avoid further processing
     }
+    const doesExist = templates.some(t => t.name === templateName && (!template || t.id !== template.id));
+    if (doesExist) {
+        toast.error("A template with this name already exists. Please use a different name.");
+        setIsSaving(false);
+        return;
+    }
+    // Prepare the template object to save
+    const templateToSave = {
+      ...newTemplate,
+      name: templateName,
+      description: description || "",
+    };
 
+    let updatedTemplates;
 
-    if (templateName && newTemplate.items.length > 0) {
-      const templateToSave = {
-        ...newTemplate,
-        name: templateName,
-        description: description || "",
-      };
-
-      let updatedTemplates;
-
+    try {
       if (template) {
         setButtonText("Editing ...");
         console.log("Editing template with ID:", template?.id);
+
         updatedTemplates = templates.map((t) => {
           console.log("Comparing template ID:", t.id, "with", template?.id);
           if (t.id === template?.id) {
             console.log("Template matched, updating template...");
-            return { ...templateToSave, owner: me };
+            return {
+              ...templateToSave,
+              owner: template.owner,
+              editedBy: me.name || "Edit By Someone",
+            };
           }
           return t;
         });
       } else {
         setButtonText("Saving ...");
         console.log("Creating new template...");
+
         updatedTemplates = [
           ...templates,
           { ...templateToSave, id: Date.now(), owner: me },
@@ -94,29 +106,24 @@ function FormPage() {
       console.log("Updated templates:", updatedTemplates);
       setTemplates(updatedTemplates);
 
-      try {
-        const response = await invoke("setTemplates", {
-          currentRoute: window.location.href,
-          templates: updatedTemplates,
-        });
+      // Send the updated templates to the server
+      const response = await invoke("setTemplates", {
+        templates: updatedTemplates,
+      });
 
-        if (response?.success) {
-          console.log("Template saved successfully:", response);
-          setButtonText(template ? "Updated Template" : "Saved Template");
-        } else {
-          console.error("Failed to save the template.");
-          toast.error("Failed to save the template.");
-        }
-      } catch (error) {
-        console.error("Error saving the template:", error);
-        toast.error("Error saving the template.");
-      } finally {
-        setIsSaving(false);
-        resetForm();
+      if (response?.success) {
+        console.log("Template saved successfully:", response);
+        setButtonText(template ? "Updated Template" : "Saved Template");
+      } else {
+        console.error("Failed to save the template.");
+        toast.error("Failed to save the template.");
       }
-    } else {
-      console.error("Template name or items missing.");
+    } catch (error) {
+      console.error("Error saving the template:", error);
+      toast.error("Error saving the template.");
+    } finally {
       setIsSaving(false);
+      resetForm();
     }
   };
 
@@ -174,62 +181,32 @@ function FormPage() {
   return (
     <div className="w-full px-4 dark:bg-darkBg h-max min-h-screen">
       <div className="w-full flex items-center justify-between pt-4 pb-2 ">
-        <h1
-          className={`dark:text-darkHeading font-semibold ${
-            viewTemplate ? "text-4xl" : "text-3xl"
-          }`}
-        >
-          {viewTemplate
-            ? viewTemplate.name
-            : template
-            ? "Edit Template"
-            : "Create Template"}
+        <h1 className={`dark:text-darkHeading font-semibold text-3xl`}>
+          {template ? "Edit Template" : "Create Template"}
         </h1>
 
         <div className="flex gap-4 my-4 ">
-          {viewTemplate ? (
-            <div className="flex justify-center items-center px-6 py-3.5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-                />
-              </svg>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={
-                !templateName || saving || newTemplate.items.length === 0
-              }
-              className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+          <button
+            type="button"
+            onClick={handleSave}
+            className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
-              <span>{buttonText}</span>
-            </button>
-          )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <span>{buttonText}</span>
+          </button>
 
           <NavLink to="/" end>
             <button
@@ -241,149 +218,118 @@ function FormPage() {
           </NavLink>
         </div>
       </div>
-      {viewTemplate ? (
-        <div className="mb-5 w-max-2xl">
-          <div className="my-3">
-            <label
-              htmlFor="description"
-              className="block text-xl font-semibold dark:text-white text-gray-700 mb-1"
-            >
-              Description
-            </label>
-            <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed mb-3">
-              {viewTemplate.description || "No description provided."}
-            </p>
+
+      <div className="max-w-2xl">
+        <div className="mb-5 relative">
+          <label
+            htmlFor="name"
+            className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+          >
+            Template Name <span className="text-red-500">*</span>
+          </label>
+          <div className="relative w-full">
+            <input
+              value={templateName}
+              onChange={(e) => setTemplateName(e.target.value)}
+              name="name"
+              type="text"
+              id="name"
+              placeholder="Enter Template Name"
+              maxLength={50}
+              className="dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
+            />
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
+              {templateName.length}/50
+            </div>
           </div>
-          <hr />
         </div>
-      ) : (
-        <div className="max-w-2xl">
-          {/* Template Name Input */}
-          <div className="mb-5 relative">
-            <label
-              htmlFor="name"
-              className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
-            >
-              Template Name <span className="text-red-500">*</span>
-            </label>
+
+        <div className="mb-5 relative">
+          <label
+            htmlFor="description"
+            className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+          >
+            Description
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            name="description"
+            id="description"
+            rows="2"
+            maxLength={100}
+            className="shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-16"
+          />
+          <div className="absolute right-3 bottom-2 text-sm text-gray-500 z-10">
+            {description.length}/100
+          </div>
+        </div>
+
+        <form
+          className="border-t  dark:border-[#A6C5E229] pt-10 mt-8 flex flex-col my-6 relative"
+          onSubmit={handleAddItem}
+        >
+          <label
+            htmlFor="item"
+            className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+          >
+            Add a List Item <span className="text-red-500">*</span>
+          </label>
+          <div className="flex w-full items-center">
             <div className="relative w-full">
               <input
-                value={templateName}
-                onChange={(e) => setTemplateName(e.target.value)}
-                name="name"
+                value={item}
+                onChange={(e) => setItem(e.target.value)}
+                name="item"
                 type="text"
-                id="name"
-                placeholder="Enter Template Name"
+                id="item"
+                placeholder="Enter List Item"
                 maxLength={50}
-                className="dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
+                className="shadow-sm  dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
               />
-              {/* Character Counter inside the Input */}
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
-                {templateName.length}/50
+                {item.length}/50
               </div>
             </div>
-          </div>
-
-          {/* Description Textarea */}
-          <div className="mb-5 relative">
-            <label
-              htmlFor="description"
-              className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+            <button
+              type="submit"
+              className="px-5 flex w-max py-3 text-base gap-1 font-medium dark:text-[#579DFF]  dark:bg-[#1C2B41] text-blue-900 bg-blue-100 border border-blue-900 da hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md ml-4"
             >
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              name="description"
-              id="description"
-              rows="2"
-              maxLength={100}
-              className="shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-16"
-            />
-            <div className="absolute right-3 bottom-2 text-sm text-gray-500 z-10">
-              {description.length}/100
-            </div>
+              <span>Add </span>
+              <span>Item</span>
+            </button>
           </div>
-
-          {/* Add List Item Form */}
-          <form
-            className="border-t  dark:border-[#A6C5E229] pt-10 mt-8 flex flex-col my-6 relative"
-            onSubmit={handleAddItem}
-          >
-            <label
-              htmlFor="item"
-              className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
-            >
-              Add a List Item <span className="text-red-500">*</span>
-            </label>
-            <div className="flex w-full items-center">
-              <div className="relative w-full">
-                <input
-                  value={item}
-                  onChange={(e) => setItem(e.target.value)}
-                  name="item"
-                  type="text"
-                  id="item"
-                  placeholder="Enter List Item"
-                  maxLength={50}
-                  className="shadow-sm  dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
-                />
-                {/* Character Counter inside the Input */}
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
-                  {item.length}/50
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="px-5 flex w-max py-3 text-base gap-1 font-medium dark:text-[#579DFF]  dark:bg-[#1C2B41] text-blue-900 bg-blue-100 border border-blue-900 da hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md ml-4"
-              >
-                <span>Add </span>
-                <span>Item</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+        </form>
+      </div>
       <div className="w-full h-full">
         <table className=" w-max table-fixed border-collapse dark:border-[#A6C5E229] h-auto">
           <thead>
             <tr className="row rounded-md">
-              <th
-              // colSpan={2}
-                // colSpan={viewTemplate !== null ? 2 : undefined}
-                className="ml-2 dark:text-[#626F86]"
-              >
-                List Item
-              </th>
+              <th className="ml-2 dark:text-[#626F86]">List Item</th>
               <th className="ml-2 dark:text-[#626F86]">Status</th>
-              {viewTemplate === null && (
-                <th className="ml-2 dark:text-[#626F86]">Action</th>
-              )}
+              <th className="ml-2 dark:text-[#626F86]">Action</th>
             </tr>
           </thead>
           <tbody className="dark:border-[#A6C5E229]">
-            {newTemplate.items.length > 0 ||
-            (viewTemplate?.items && viewTemplate.items.length > 0) ? (
-              // Rendering tasks from either newTemplate or viewTemplate
-              (newTemplate.items.length > 0
-                ? newTemplate.items
-                : viewTemplate.items
-              ).map((task, index) => (
-                // <tr key={task.id || index}>
+            {newTemplate.items.length > 0 ? (
+              (newTemplate.items.length > 0 && newTemplate.items).map(
+                (task, index) => (
                   <TaskItem
-                    isViewable={viewTemplate !== null}
+                    isViewable={false}
                     key={task.id || index}
                     task={task}
                     handleStatusChange={handleStatusChange}
                     handleDeleteTask={handleDeleteTask}
                     handleTitleChange={handleTitleChange}
                   />
-                // </tr>
-              ))
+                )
+              )
             ) : (
               <tr className="row">
-                <td colSpan={4} className="text-center dark:text-[#626F86]">
+                <td
+                  colSpan={4}
+                  className="text-center dark:text-[#626F86] w-[670px]"
+                >
                   No items available
                 </td>
               </tr>
@@ -391,17 +337,6 @@ function FormPage() {
           </tbody>
         </table>
       </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
     </div>
   );
 }

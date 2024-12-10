@@ -1,33 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import FormPage from "./pages/FormPage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { invoke } from "@forge/bridge";
 import useStore from "./Store";
-import Settings from "./pages/Settings";
+import View from "./pages/ViewPage";
 
 const App = () => {
-  const { templates, setTemplates, setMe, me, setSettings, settings } =
-    useStore();
-  const [editTemplate, setEditTemplate] = useState(null);
+  const navigate = useNavigate();
+  const { setTemplates, setMe, setSettings, setSiteAdmin } = useStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userData = await invoke("getMyself");
-        console.log(userData?.data?.groups?.items)
+        // await invoke("setTemplates", { templates: [] }); //for testing
+        const [userData, isAdmin, currentSettings, allTemplates] =
+          await Promise.all([
+            invoke("getMyself"),
+            invoke("checkAdminPermissions"),
+            invoke("getSettings"),
+            invoke("getTemplates"),
+          ]);
+        // Handle admin permissions
+        const isAdminPermission =
+          isAdmin?.permissions?.ADMINISTER?.havePermission;
+        console.log("Admin Permissions:", isAdmin);
+
+        // Update site admin status in Zustand store
+        setSiteAdmin(isAdminPermission);
+
+        console.log("Site Admin State Updated:", isAdminPermission);
+        // Set the user data
         setMe({
           name: userData?.data?.displayName || "Unknown User",
           email: userData?.data?.emailAddress || "No Email Provided",
           avatar: userData?.data?.avatarUrls?.["48x48"] || "default-avatar-url",
         });
-        const currentSettings = await invoke("getSettings", {
-          currentRoute: window.location.href,
-        });
 
+        // Handle settings
         if (currentSettings && typeof currentSettings === "object") {
           setSettings(currentSettings);
           console.log("Fetched settings:", currentSettings);
@@ -35,10 +48,7 @@ const App = () => {
           throw new Error("Settings data is invalid or missing.");
         }
 
-        const allTemplates = await invoke("getTemplates", {
-          currentRoute: window.location.href,
-        });
-
+        // Handle templates
         if (Array.isArray(allTemplates)) {
           setTemplates(allTemplates || []);
           console.log(allTemplates);
@@ -46,9 +56,11 @@ const App = () => {
           throw new Error("Templates data is not an array.");
         }
       } catch (error) {
-        toast.error("Error loading templates.");
+        console.error("Error in fetchData:", error);
+        toast.error("Error loading data.");
       } finally {
         setLoading(false);
+        navigate("/");
       }
     };
 
@@ -56,31 +68,18 @@ const App = () => {
   }, []);
 
   return (
-    <div className=" dark:bg-darkBg h-max min-h-screen">
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              owner={me}
-              loading={loading}
-              setEditTemplate={setEditTemplate}
-              setTemplates={setTemplates}
-            />
-          }
-        />
-        <Route
-          path="/form"
-          element={
-            <FormPage
-              owner={me}
-              templates={templates}
-              setTemplates={setTemplates}
-              editTemplate={editTemplate}
-            />
-          }
-        />
-      </Routes>
+    <div className="dark:bg-darkBg h-max min-h-screen">
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Home loading={loading} />} />
+          <Route path="/form" element={<FormPage />} />
+          <Route path="/view" element={<View />} />
+
+        </Routes>
+      )}
+
       <ToastContainer
         position="top-center"
         autoClose={5000}

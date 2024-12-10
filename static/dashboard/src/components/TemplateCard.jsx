@@ -4,29 +4,19 @@ import { toast } from "react-toastify";
 import useStore from "../Store";
 import { invoke } from "@forge/bridge";
 
-const TemplateCard = ({ template, setEditTemplate }) => {
-  const { me, setTemplates, templates, settings } = useStore();
+const TemplateCard = ({ template }) => {
+  const { me, setTemplates, templates, settings, siteAdmin } = useStore();
   const navigate = useNavigate();
   console.log("Templ===>", template);
   console.log("Me===>", me);
   console.log(settings);
 
   const handleEditTemplate = (template) => {
-    if (template?.owner?.email === me?.email) {
-      setEditTemplate(template);
-      navigate("/form", { state: { template } });
-    } else {
-      toast.error("You do not have permission to edit this template.");
-    }
+    navigate("/form", { state: { template } });
   };
   const handleViewTemplate = (template) => {
-    if (template?.owner?.email !== me?.email) {
-      setEditTemplate(template);
-      navigate("/form", { state: { viewTemplate: template } });
-    } else {
-      toast.error("You can direclty edit this template.");
-    }
-    navigate("/form", { state: { viewTemplate: template } });
+
+    navigate("/view", { state: { viewTemplate: template } });
   };
 
   const handleDeleteTemplate = async (template) => {
@@ -42,7 +32,6 @@ const TemplateCard = ({ template, setEditTemplate }) => {
 
     try {
       const response = await invoke("setTemplates", {
-        currentRoute: window.location.href,
         templates: updatedTemplates,
       });
 
@@ -58,7 +47,7 @@ const TemplateCard = ({ template, setEditTemplate }) => {
   };
 
   return (
-    <div className="w-[30rem] dark:border-[#A6C5E229] border rounded-lg h-[250px] bg-white dark:bg-darkBg ">
+    <div className="w-full dark:border-[#A6C5E229] border rounded-lg h-[250px] bg-white dark:bg-darkBg ">
       <div className="px-10 py-7 flex flex-col justify-between items-start h-full w-full">
         <div class="w-full mt-1 flex justify-between items-center ">
           <h1 class="text-2xl font-semibold dark:text-white">
@@ -66,7 +55,7 @@ const TemplateCard = ({ template, setEditTemplate }) => {
               ? template.name.slice(0, 20) + "..."
               : template.name}
           </h1>
-          <div class="rounded-lg px-3 py-1 bg-[#E9F2FF] dark:bg-[#1C2B41]">
+          <div class="rounded-lg px-3 py-1 mb-2 bg-[#E9F2FF] dark:bg-[#1C2B41]">
             <span class="text-blue-700 text-base dark:text-[#579DFF]">
               Total Items: {template.items.length}
             </span>
@@ -74,9 +63,7 @@ const TemplateCard = ({ template, setEditTemplate }) => {
         </div>
 
         <div
-          className={` flex overflow-hidden  ${
-            template.description.length > 0 ? "flex-col" : "flex-col-reverse"
-          }`}
+          className={` flex overflow-hidden flex-col`}
         >
           <p class="text-gray-600 dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
             {template.description.length > 100
@@ -85,10 +72,15 @@ const TemplateCard = ({ template, setEditTemplate }) => {
           </p>
 
           <div class="mt-2 text-base">
-            <span class="text-gray-400 ">Created by: </span>
+            <span class="text-gray-400 ">
+              {template.editedBy ? `Edited By:` : "Created By:"}
+            </span>
             <span className="dark:text-white">
-              {template.owner.name || "Konain"}
-              {template?.owner?.email === me.email && "(You)"}
+              {template.editedBy
+                ? template.editedBy
+                : `${template.owner?.name || "Konain"}${
+                    template?.owner?.email === me.email ? " (You)" : ""
+                  }`}
             </span>
           </div>
         </div>
@@ -96,22 +88,18 @@ const TemplateCard = ({ template, setEditTemplate }) => {
         <div class="mt-4 w-full flex h-max justify-between items-center">
           <div className="w-max flex gap-1">
             <button
-              className={`dark:bg-[#A1BDD914] rounded-md px-8 py-2 text-base font-medium 
-      ${
-        me.email === template?.owner?.email || settings?.allowTemplateEdit
-          ? "text-black bg-gray-100 hover:bg-gray-300"
-          : "text-gray-300 bg-gray-50 cursor-not-allowed"
-      } 
-      dark:text-white dark:hover:bg-gray-900`}
+              className={`dark:bg-[#A1BDD914] rounded-md px-8 py-2 text-base font-medium text-black bg-gray-100 hover:bg-gray-300 dark:text-white dark:hover:bg-gray-900`}
               onClick={() =>
                 me.email === template?.owner?.email ||
-                settings?.allowTemplateEdit
+                settings?.allowTemplateEdit ||
+                siteAdmin == true
                   ? handleEditTemplate(template)
                   : handleViewTemplate(template)
               }
             >
               {me.email === template?.owner?.email ||
-              settings?.allowTemplateEdit
+              settings?.allowTemplateEdit ||
+              siteAdmin == true
                 ? "Edit"
                 : "View"}
             </button>
@@ -121,7 +109,7 @@ const TemplateCard = ({ template, setEditTemplate }) => {
             className={` py-2 text-base flex justify-center gap-2 font-medium ${
               me.email === template?.owner?.email
                 ? "text-red-600 hover:text-red-700 dark:text-[#F87168]"
-                : "text-gray-400 cursor-not-allowed"
+                : "text-gray-400 "
             }`}
             disabled={me.email !== template?.owner?.email}
             onClick={() => handleDeleteTemplate(template)}
