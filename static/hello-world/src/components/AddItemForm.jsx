@@ -35,7 +35,7 @@ const AddItemForm = ({ handleAddItem }) => {
             id="item"
             placeholder="Enter List Item"
             maxLength={50}
-            className="shadow-sm md:px-8 md:py-3 dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2 pr-16"
+            className="shadow-sm md:px-2 md:py-3 dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2 pr-16"
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
             {item.length}/50

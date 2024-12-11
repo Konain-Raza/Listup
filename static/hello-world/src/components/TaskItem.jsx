@@ -21,9 +21,10 @@ const TaskItem = ({
           />
         </td>
       )}
-      <td className={`${isViewable ? "w-[60%]" : "w-[70%]"} max-w-max text-gray-700`}>
+      <td className={`${isViewable ? "w-[60%]" : "w-[70%]"} max-w-max text-gray-700 dark:text-white`}>
         <h5
-          className={task.status === "Done" ? "line-through text-gray-700" : ""}
+          className={task.status === "Done" ? "font-normal line-through text-gray-700  dark:text-white" : "font-normal  dark:text-white"}
+          onClick={()=> handleStatusChange(task.id, "Done")}
         >
           {task.title || task.text}
         </h5>

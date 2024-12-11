@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@forge/bridge";
 import { toast, ToastContainer } from "react-toastify";
-import { NavLink, useLocation } from "react-router-dom";
+import {
+  NavLink,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import useStore from "../Store";
 import "../index.css";
 import TaskItem from "../components/TaskItem";
@@ -9,6 +14,8 @@ import TaskItem from "../components/TaskItem";
 function FormPage() {
   const { me, templates, setTemplates } = useStore();
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [template, setTemplate] = useState(null);
 
   const [templateName, setTemplateName] = useState("");
@@ -61,11 +68,17 @@ function FormPage() {
       setIsSaving(false); // Stop saving process if validation fails
       return; // Exit early to avoid further processing
     }
-    const doesExist = templates.some(t => t.name === templateName && (!template || t.id !== template.id));
+    const doesExist = templates.some(
+      (t) =>
+        t.name.trim() === templateName.trim() &&
+        (!template || t.id !== template.id)
+    );
     if (doesExist) {
-        toast.error("A template with this name already exists. Please use a different name.");
-        setIsSaving(false);
-        return;
+      toast.error(
+        "A template with this name already exists. Please use a different name."
+      );
+      setIsSaving(false);
+      return;
     }
     // Prepare the template object to save
     const templateToSave = {
@@ -123,7 +136,12 @@ function FormPage() {
       toast.error("Error saving the template.");
     } finally {
       setIsSaving(false);
-      resetForm();
+      if (template) {
+        setButtonText("Edit Template");
+      } else {
+        resetForm();
+        navigate("/");
+      }
     }
   };
 
@@ -189,7 +207,7 @@ function FormPage() {
           <button
             type="button"
             onClick={handleSave}
-            className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+            className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -208,14 +226,13 @@ function FormPage() {
             <span>{buttonText}</span>
           </button>
 
-          <NavLink to="/" end>
-            <button
-              type="button"
-              className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:hover:bg-gray-900 rounded-lg text-center"
-            >
-              <span>Go Back</span>
-            </button>
-          </NavLink>
+          <button
+            type="button"
+            className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 dark:hover:bg-gray-900 rounded-lg text-center"
+            onClick={() => navigate("/")}
+          >
+            <span>Go Back</span>
+          </button>
         </div>
       </div>
 
@@ -236,8 +253,9 @@ function FormPage() {
               id="name"
               placeholder="Enter Template Name"
               maxLength={50}
-              className="dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
+              className="dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
             />
+
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
               {templateName.length}/50
             </div>
@@ -293,7 +311,7 @@ function FormPage() {
             </div>
             <button
               type="submit"
-              className="px-5 flex w-max py-3 text-base gap-1 font-medium dark:text-[#579DFF]  dark:bg-[#1C2B41] text-blue-900 bg-blue-100 border border-blue-900 da hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md ml-4"
+              className="px-5 flex w-max py-3 text-base gap-1 font-medium dark:text-[#579DFF]  dark:bg-[#1C2B41] text-blue-900 bg-blue-100 border border-blue-900 da hover:bg-blue-200 rounded-md ml-4"
             >
               <span>Add </span>
               <span>Item</span>
@@ -302,7 +320,7 @@ function FormPage() {
         </form>
       </div>
       <div className="w-full h-full">
-        <table className=" w-max table-fixed border-collapse dark:border-[#A6C5E229] h-auto">
+        <table className="w-max table-fixed border-collapse dark:border-[#A6C5E229] rounded-xl h-auto">
           <thead>
             <tr className="row rounded-md">
               <th className="ml-2 dark:text-[#626F86]">List Item</th>
@@ -328,7 +346,7 @@ function FormPage() {
               <tr className="row">
                 <td
                   colSpan={4}
-                  className="text-center dark:text-[#626F86] w-[670px]"
+                  className="text-left dark:text-[#626F86] w-[670px]"
                 >
                   No items available
                 </td>

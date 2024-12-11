@@ -39,7 +39,7 @@ const Dropdown = ({ selected, taskId, handleStatusChange, isViewable }) => {
   return (
     <div className="relative w-max">
       <div
-        className={`w-max text-base px-2 py-1 border-gray-300  dark:border-gray-500  rounded-md cursor-pointer ${
+        className={`w-max text-base px-2 py-1 border-gray-300  dark:border-gray-500  rounded-md ${isViewable ? "cursor-default": "cursor-pointer"} ${
           options.find((option) => option.value === selected)?.style
         }`}
         onClick={isViewable ? undefined : () => setIsOpen(!isOpen)}

@@ -5,7 +5,7 @@ const ProgressBar = ({ value, max }) => {
   const percentage =
     max > 0 ? Math.min((value / max) * 100, 100).toFixed(2) : 0;
 
-  const barColor = percentage >= 100 ? "bg-green-500" : "bg-blue-500";
+  const barColor = percentage >= 100 ? "bg-green-500" : "bg-blue-500 dark:bg-[#9FADBC]";
 
   return (
     <div className="w-full max-w-2xl">
@@ -15,11 +15,11 @@ const ProgressBar = ({ value, max }) => {
         Total Tasks
       </h5>
       <div className="w-full flex items-center justify-between">
-        <div className="w-full bg-gray-300 rounded-full h-3 overflow-hidden ">
+        <div className="w-full bg-gray-300 dark:bg-[] rounded-full h-2 overflow-hidden ">
           {" "}
           {/* Full width */}
           <div
-            className={`h-3 ${barColor}`}
+            className={`h-2 ${barColor}`}
             style={{ width: `${percentage}%` }}
           ></div>
         </div>

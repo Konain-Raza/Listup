@@ -12,6 +12,7 @@ const Templates = () => {
   const [selectedTemplates, setSelectedTemplates] = useState([]);
 
   useEffect(() => {
+    console.log(templates)
     console.log("Current used templates:", templates.used);
     console.log("Current tasks:", tasks);
     const usedTemplateNames = [
@@ -26,7 +27,7 @@ const Templates = () => {
       used: usedTemplateNames,
     });
     console.log("Current used templates:", templates.used);
-  }, [templates, tasks]); // Effect runs on initial mount and whenever templates or tasks change
+  }, [tasks]); // Effect runs on initial mount and whenever templates or tasks change
 
   const handleCheckboxChange = (templateName) => {
     setSelectedTemplates((prevSelected) =>
@@ -94,7 +95,7 @@ const Templates = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className="size-6 dark:text-darkHeading"
           >
             <path
               strokeLinecap="round"
@@ -105,48 +106,52 @@ const Templates = () => {
         </NavLink>
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-start">
-        {templates.all
-          .filter((template) => template.name !== "Custom") // Filtering condition
-          .map((template) => (
-            <div
-              key={template.name}
-              className={`border border-gray-300 dark:border-[#A6C5E229] p-4 rounded-md w-full max-w-80 flex justify-between items-center gap-4 ${
-                templates.used.includes(template.name)
-                  ? "bg-[#091E4208] dark:bg-[#03040442] border-transparent"
-                  : ""
-              }`}
-            >
-              <div className="w-[80%] flex gap-2 items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedTemplates.includes(template.name)}
-                  onChange={() => handleCheckboxChange(template.name)}
-                  disabled={templates.used.includes(template.name)}
-                  className="h-5 w-5"
-                />
-                <span
-                  className="text-md font-medium dark:text-gray-400 overflow-hidden whitespace-nowrap text-ellipsis"
-                  title={template.name}
-                >
-                  {template.name.length > 20
-                    ? `${template.name.slice(0, 20)}...`
-                    : template.name}
-                </span>
-              </div>
-              <PrimaryButton
-                label={"View"}
-                keyType={"view"}
-                className={`px-3 py-2 ${
-                  templates.used.includes(template.name) &&
-                  "dark:bg-[#091e420a]"
+      {templates && templates.all && templates.all.length > 0 ? (
+        <div className="flex flex-wrap gap-4 justify-start">
+          {templates.all
+            .filter((template) => template.name !== "Custom") // Filtering condition
+            .map((template) => (
+              <div
+                key={template.name}
+                className={`border border-gray-300 dark:border-[#A6C5E229] p-4 rounded-md w-full max-w-80 flex justify-between items-center gap-4 ${
+                  templates.used.includes(template.name)
+                    ? "bg-[#091E4208] dark:bg-[#03040442] border-transparent"
+                    : ""
                 }`}
-                onClick={() => handleViewClick(template)}
-                disabled={templates.used.includes(template.name)}
-              />
-            </div>
-          ))}
-      </div>
+              >
+                <div className="w-[80%] flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedTemplates.includes(template.name)}
+                    onChange={() => handleCheckboxChange(template.name)}
+                    disabled={templates.used.includes(template.name)}
+                    className="h-5 w-5"
+                  />
+                  <span
+                    className="text-md font-medium dark:text-gray-400 overflow-hidden whitespace-nowrap text-ellipsis"
+                    title={template.name}
+                  >
+                    {template.name.length > 20
+                      ? `${template.name.slice(0, 20)}...`
+                      : template.name}
+                  </span>
+                </div>
+                <PrimaryButton
+                  label={"View"}
+                  keyType={"view"}
+                  className={`px-3 py-2 ${
+                    templates.used.includes(template.name) &&
+                    "dark:bg-[#091e420a]"
+                  }`}
+                  onClick={() => handleViewClick(template)}
+                  disabled={templates.used.includes(template.name)}
+                />
+              </div>
+            ))}
+        </div>
+      ) : (
+        <p>No Templates</p>
+      )}
 
       <div className="text-left mt-6">
         <button

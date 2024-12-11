@@ -20,15 +20,15 @@ const View = () => {
           {viewTemplate?.name || "Template Name"}
         </h1>
 
-        <div className="flex gap-4 my-4 ">
-          <div className="flex justify-center items-center px-6 py-3.5">
+        <div className="flex my-4 ">
+          <div className="flex justify-center items-center px-6 py-3.5 relative group">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-6"
+              className="size-6 text-blue-600"
             >
               <path
                 strokeLinecap="round"
@@ -36,12 +36,15 @@ const View = () => {
                 d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
               />
             </svg>
+            <span className="absolute bottom-1/2 mb-2 hidden group-hover:block w-auto px-2 py-1 text-sm da dark:bg-darkBg rounded-md shadow-lg">
+              Locked Template
+            </span>
           </div>
 
           <NavLink to="/" end>
             <button
               type="button"
-              className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:hover:bg-gray-900 rounded-lg text-center"
+              className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200  dark:hover:bg-gray-900 rounded-lg text-center"
             >
               <span>Go Back</span>
             </button>
@@ -61,7 +64,7 @@ const View = () => {
             {viewTemplate?.description || "No description provided."}
           </p>
         </div>
-        <hr />
+        <hr className="dark:border-[#A6C5E229] dark:text-[#A6C5E229]" />
       </div>
       <div className="w-full h-full">
         <table className="w-max table-fixed border-collapse dark:border-[#A6C5E229] h-auto">

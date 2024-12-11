@@ -11,6 +11,7 @@ const Home = ({ loading }) => {
   console.log(siteAdmin);
   const navigate = useNavigate();
 
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -27,10 +28,11 @@ const Home = ({ loading }) => {
           </h1>
 
           <div className="flex gap-4 my-4 ">
-            <NavLink to="/form" end>
+       
               <button
                 type="button"
-                className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+                className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+                onClick={()=>navigate("/form")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +50,7 @@ const Home = ({ loading }) => {
                 </svg>
                 <span>Create a New Template</span>
               </button>
-            </NavLink>
+     
 
             {siteAdmin === true && (
               <button
@@ -57,7 +59,7 @@ const Home = ({ loading }) => {
                 data-drawer-target="drawer-example"
                 data-drawer-show="drawer-example"
                 aria-controls="drawer-example"
-                className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:hover:bg-gray-900 rounded-lg text-center"
+                className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200  dark:hover:bg-gray-900 rounded-lg text-center"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -95,8 +97,8 @@ const Home = ({ loading }) => {
                 <TemplateCard key={template.id} template={template} />
               ))}
              
-                <div className="w-full border rounded-lg h-[250px] bg-blue-100 dark:bg-[#1C2B41] dark:border-[#A6C5E229]" onClick={()=>navigate("/form")}>
-                  <div className="py-7 px-8 flex flex-col h-full justify-center items-center">
+                <div className="w-full border flex flex-col items-center rounded-lg h-[250px] bg-blue-100 dark:bg-[#1C2B41] dark:border-[#A6C5E229]" onClick={()=>navigate("/form")}>
+                <div className="px-10 py-7 flex flex-col justify-center items-center h-full w-full">
                     <button className="text-blue-700 dark:text-[#579DFF] text-2xl py-2 px-4 rounded-lg" onClick={()=>navigate("/form")} >
                       + Add a New Template
                     </button>

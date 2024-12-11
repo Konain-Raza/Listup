@@ -15,7 +15,6 @@ const TemplateCard = ({ template }) => {
     navigate("/form", { state: { template } });
   };
   const handleViewTemplate = (template) => {
-
     navigate("/view", { state: { viewTemplate: template } });
   };
 
@@ -51,9 +50,10 @@ const TemplateCard = ({ template }) => {
       <div className="px-10 py-7 flex flex-col justify-between items-start h-full w-full">
         <div class="w-full mt-1 flex justify-between items-center ">
           <h1 class="text-2xl font-semibold dark:text-white">
-            {template.name && template.name.length > 20
-              ? template.name.slice(0, 20) + "..."
-              : template.name}
+            {template.name.charAt(0).toUpperCase() +
+              (template.name.length > 20
+                ? template.name.slice(1, 20) + "..."
+                : template.name.slice(1))}
           </h1>
           <div class="rounded-lg px-3 py-1 mb-2 bg-[#E9F2FF] dark:bg-[#1C2B41]">
             <span class="text-blue-700 text-base dark:text-[#579DFF]">
@@ -62,9 +62,7 @@ const TemplateCard = ({ template }) => {
           </div>
         </div>
 
-        <div
-          className={` flex overflow-hidden flex-col`}
-        >
+        <div className={` flex overflow-hidden flex-col`}>
           <p class="text-gray-600 dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
             {template.description.length > 100
               ? template.description.slice(0, 120)
@@ -73,7 +71,7 @@ const TemplateCard = ({ template }) => {
 
           <div class="mt-2 text-base">
             <span class="text-gray-400 ">
-              {template.editedBy ? `Edited By:` : "Created By:"}
+              {template.editedBy ? `Edited By: ` : "Created By: "}
             </span>
             <span className="dark:text-white">
               {template.editedBy

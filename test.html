@@ -1,0 +1,95 @@
+if(is_page('testing-page')){
+
+    wp_enqueue_style( 'email-popup-css', get_stylesheet_directory_uri() . '/assets/css/email-form.css');
+} 
+}
+
+add_shortcode('email_popup_form', 'email_popup_form_fun');
+
+function email_popup_form_fun(){ 
+ob_start();
+?>
+<div id ="email_popup_main">
+<div class ="first_child">
+    <h3 class= "heading_First">Unlock free brushes !</h3>
+    <div class="btns">
+        <button id="email_btn" onlcik this parent modal close and section_two show >EMAIL</button>
+        <button class="unlock_btn">UNLOCK BRUSHES</button>
+            </div>
+</div>
+<div class="second_child">
+    <div class="circle_benifits">
+    <ul class="circle-list">  
+    <li class="circle-item active">  
+        <div class="circle"></div>  
+        <span class="benefit">Benefit</span>  
+    </li>  
+    <li class="circle-item">  
+        <div class="circle"></div>  
+        <span class="benefit">Benefit</span>  
+    </li>  
+    <li class="circle-item">  
+        <div class="circle"></div>  
+        <span class="benefit">Benefit</span>  
+    </li>  
+</ul>  
+    </div>
+</div>
+</div>
+
+
+<!-- check your mail-->
+
+<div id="section_two">
+<div class="section-two-first-child">
+        <div class="circles-one"></div>
+        <div class="circles-one"></div>
+        <div class="circles-one"></div>
+
+</div>
+<div class="Head-sec-two">
+    <h3 class="Head-three">Verify your email</h3>
+
+</div>
+<div class="section-two-second-child">
+        <div class="client-icon-one">
+            <img class="images-client" src="https://wordpress-465169-5069011.cloudwaysapps.com/wp-content/uploads/2024/12/download.png" alt="">
+        </div>
+        <div class="client-icon-one">
+        <img class="images-client" src="https://wordpress-465169-5069011.cloudwaysapps.com/wp-content/uploads/2024/12/download.png" alt="">
+        </div>
+        <div class="client-icon-one">
+        <img class="images-client" src="https://wordpress-465169-5069011.cloudwaysapps.com/wp-content/uploads/2024/12/download.png" alt="">
+        </div>
+        
+</div>
+</div>
+
+
+<!-- fill your mail-->
+
+<div class="section_three">
+<div class="section-three-first-child">
+        <div class="circles-one"></div>
+        <div class="circles-one"></div>
+        <div class="circles-one"></div>
+
+</div>
+<div class="Head-sec-three">
+    <h3 class="Head-three-sec-three">Your email is verified.</h3>
+    <h3 class="Head-three-sec-three">Fill the remaining steps to unlock brushes.</h3>
+
+</div>
+<div class="form-wrapper">  
+    <div class="form-container">  
+        <input type="text" class="form-input" placeholder="First name" required>  
+        <input type="text" class="form-input" placeholder="Last name" required>  
+        <input type="password" class="form-input" placeholder="Password" required>  
+    </div>  
+</div>  
+</div>  
+
+<?php 
+$html = ob_get_clean();
+return $html;
+}

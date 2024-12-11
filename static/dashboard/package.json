@@ -9,6 +9,7 @@
     "@atlaskit/drawer": "^9.2.5",
     "@atlaskit/icon": "^22.28.0",
     "@atlaskit/modal-dialog": "^12.17.13",
+    "@atlaskit/spinner": "^16.3.4",
     "@emotion/react": "^11.13.5",
     "@forge/bridge": "4.1.0",
     "@heroicons/react": "^2.2.0",

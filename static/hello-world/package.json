@@ -10,6 +10,8 @@
     "@atlaskit/eslint-plugin-ui-styling-standard": "^1.0.1",
     "@atlaskit/form": "^10.5.12",
     "@atlaskit/modal-dialog": "^12.17.13",
+    "@atlaskit/section-message": "^6.8.2",
+    "@atlaskit/spinner": "^16.3.4",
     "@atlaskit/textfield": "^6.5.5",
     "@forge/bridge": "4.1.0",
     "react": "^18.0.0",

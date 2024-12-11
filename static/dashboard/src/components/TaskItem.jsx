@@ -22,7 +22,7 @@ const TaskItem = ({
   return (
     <tr key={task.id} className="row">
       <td className="min-w-[370px] max-w-max">
-        {isEditing ? (
+        {isEditing && !isViewable? (
           <input
             type="text"
             value={editedTitle}
@@ -36,7 +36,7 @@ const TaskItem = ({
         ) : (
           <p
             onClick={() => setIsEditing(true)} // Start editing on click
-            className={`flex-grow cursor-pointer dark:text-white ${
+            className={`flex-grow ${isViewable? "cursor-default": "cursor-pointer"} dark:text-white ${
               task.status === "Done"
                 ? "line-through text-gray-500 dark:text-white"
                 : ""

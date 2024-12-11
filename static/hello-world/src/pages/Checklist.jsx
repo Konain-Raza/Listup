@@ -69,13 +69,21 @@ const CheckList = () => {
     setIsAddingTask(true);
 
     try {
-      const newTasks = template.items.map((item, i) => ({
-        id: `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-        title: item.title || `Task ${i + 1}`,
-        status: inputStatus,
-        checked: inputStatus === "Done",
-        templateName: template.name || "Custom",
-      }));
+      const newTasks = template.items.map((item, i) => {
+        const newTask = {
+          id: `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          title: item.title || `Task ${i + 1}`,
+          status: inputStatus,
+          checked: inputStatus === "Done",
+          templateName: template.name || "Custom", // "Custom" if name is missing
+        };
+  
+        // if (newTask.templateName === "Custom" && activeGroup !== "Custom") {
+        //   toggleAccordion("Custom")
+        // }
+  
+        return newTask;
+      });
 
       const updatedTasks = [...newTasks, ...tasks];
       setTasks(updatedTasks);
@@ -98,6 +106,8 @@ const CheckList = () => {
     } finally {
       setInputStatus("To Do");
       setIsAddingTask(false);
+      toggleAccordion("Custom")
+
     }
   };
 
@@ -209,7 +219,7 @@ const CheckList = () => {
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => toggleAccordion(group.templateName)}
                 >
-                  <span className="text-base text-gray-700  dark:text-darkHeading ">
+                  <span className="text-base font-bold text-gray-700  dark:text-darkHeading ">
                     {group.templateName}
                   </span>
 
@@ -259,7 +269,7 @@ const CheckList = () => {
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
                         stroke="currentColor"
-                         className="size-6 dark:text-white"
+                        className="size-6 dark:text-white"
                       >
                         <path
                           strokeLinecap="round"
@@ -335,7 +345,9 @@ const CheckList = () => {
                 className="flex justify-between items-center cursor-pointer"
                 onClick={() => toggleAccordion("Custom")}
               >
-                <span className="text-base  dark:text-darkHeading">Custom</span>
+                <span className="text-base font-bold  dark:text-darkHeading">
+                  Custom
+                </span>
 
                 <span className="flex items-center">
                   <button
@@ -369,7 +381,6 @@ const CheckList = () => {
                       strokeWidth={1.5}
                       stroke="currentColor"
                       className="size-6 dark:text-white"
-
                     >
                       <path
                         strokeLinecap="round"
@@ -385,7 +396,6 @@ const CheckList = () => {
                       strokeWidth={1.5}
                       stroke="currentColor"
                       className="size-6 dark:text-white"
-
                     >
                       <path
                         strokeLinecap="round"

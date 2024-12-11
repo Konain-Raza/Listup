@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { invoke } from "@forge/bridge";
 import useStore from "./Store";
+import Spinner from '@atlaskit/spinner';
 import View from "./pages/ViewPage";
 
 const App = () => {
@@ -70,7 +71,11 @@ const App = () => {
   return (
     <div className="dark:bg-darkBg h-max min-h-screen">
       {loading ? (
-        <div>Loading...</div>
+        <div
+        className="w-full h-screen flex justify-center items-center"
+        >
+          <Spinner size={"xlarge"} label="Loading" />
+        </div>
       ) : (
         <Routes>
           <Route path="/" element={<Home loading={loading} />} />

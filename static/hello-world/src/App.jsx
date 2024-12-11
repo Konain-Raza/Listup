@@ -7,7 +7,9 @@ import Templates from "./pages/Templates";
 import View from "./pages/View";
 import useStore from "./Store";
 import { view, invoke } from "@forge/bridge";
+import SectionMessage from '@atlaskit/section-message';
 import "./index.css";
+import Spinner from '@atlaskit/spinner';
 
 const App = () => {
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ const App = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    let isAllowed; // Temporary storage for permission check
+    let isAllowed; 
 
     try {
       const context = await view.getContext();
@@ -86,8 +88,11 @@ const App = () => {
     } catch (error) {
       toast.error(error.message || "An error occurred while fetching data.");
     } finally {
+      navigate(isAllowed ? "/no-permission" : "/no-permission");
+
       setIsLoading(false);
-      navigate(isAllowed ? "/" : "/no-permission");
+      console.log(isAllowed)
+      navigate(isAllowed ? "/no-permission" : "/no-permission");
     }
   };
 
@@ -97,8 +102,9 @@ const App = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="loading">Loading tasks...</span>
+      <div className="flex items-center justify-center h-screen dark:bg-darkBg">
+    <Spinner size={"large"} label="Loading" />
+
       </div>
     );
   }
@@ -112,10 +118,9 @@ const App = () => {
         <Route
           path="/no-permission"
           element={
-            <div style={{ textAlign: "center", marginTop: "50px" }}>
-              <h1>Access Denied</h1>
-              <p>You do not have permission to view this page.</p>
-            </div>
+            <SectionMessage title="This account has been permanently deleted" appearance="error">
+            <p>You're not allowed to change these restrictions. It's either due to the restrictions on the page, or permission settings for this space.</p>
+          </SectionMessage>
           }
         />
       </Routes>
