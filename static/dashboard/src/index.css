@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.row {
+  border: 1px solid rgba(128, 128, 128, 0.384);
+  /* width: 900px; */
+}
+thead{
+  border-bottom: none !important;
+
+}
+
+.row td,
+.row th {
+  border-right: 1px solid rgba(128, 128, 128, 0.384);
+  padding: 15px;
+  /* width: auto; You can use 'auto' instead of 'max-content' for width */
+}
+
+.row td:last-child {
+  padding-right: 15px;
+  border-right: none;
+}
+
+.row td:first-child {
+  padding-left: 15px !important;
+  /* padding: 0px !important; */
+  /* min-width: 300px; */
+}
+
+.row th:first-child {
+  padding-left: 15px !important;
+  /* padding: 0px !important; */
+  /* min-width: 300px; */
+}
+
+.row th:last-child {
+    padding-right: 15px !important;
+    /* padding: 0px !important; */
+    /* min-width: 300px; */
+  }
+  
+a{
+  text-decoration: none !important;
+}
+input:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.5);
+}
+textarea:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.5);
+}
+
+.row tr:last-child td:first-child {
+  /* border: 2px solid orange; */
+  border-bottom-left-radius: 30px;
+}
+  
+.row tr:last-child td:last-child {
+  /* border: 2px solid green; */
+  border-bottom-right-radius: 30px;
+}

@@ -1,0 +1,51 @@
+{
+  "name": "jira-issue-panel-custom-ui-static",
+  "version": "0.2.24",
+  "private": true,
+  "homepage": ".",
+  "dependencies": {
+    "@atlaskit/badge": "^16.4.3",
+    "@atlaskit/button": "^20.3.5",
+    "@atlaskit/css-reset": "^6.6.2",
+    "@atlaskit/datetime-picker": "^15.10.4",
+    "@atlaskit/eslint-plugin-ui-styling-standard": "^1.0.1",
+    "@atlaskit/form": "^10.5.12",
+    "@atlaskit/icon": "^23.1.0",
+    "@atlaskit/modal-dialog": "^12.18.2",
+    "@atlaskit/primitives": "^13.3.2",
+    "@atlaskit/section-message": "^6.8.2",
+    "@atlaskit/spinner": "^16.3.4",
+    "@atlaskit/textfield": "^6.5.5",
+    "@forge/bridge": "4.1.0",
+    "date-fns": "^4.1.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^7.0.2",
+    "react-toastify": "^10.0.6",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.14",
+    "postcss": "^8.4.49",
+    "react-scripts": "^5.0.1",
+    "tailwindcss": "^3.4.15"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,295 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f5f7;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Message Styles */
+  .message {
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 4px;
+  }
+  
+  .message-info {
+    background-color: #d9f7be;
+    color: #6b8e23;
+  }
+  
+  .message-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+  }
+  
+  .message-warning {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+  }
+  
+  .message-error {
+    background-color: #f2dede;
+    color: #a94442;
+  }
+  
+  /* Modal Styles */
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    width: 100%;
+  }
+  
+  .modal-header h1 {
+    margin-top: 0;
+    font-size: 24px;
+  }
+  
+  .modal-body {
+    padding: 10px 0;
+  }
+  
+  .modal-footer {
+    margin-top: 20px;
+    text-align: right;
+  }
+  
+  .modal-footer button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .modal-footer button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .header .btn-primary {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .header .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-top: 10px;
+    height: 10px;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background-color: #4caf50;
+    border-radius: 4px;
+  }
+  
+  .progress-fill.success {
+    background-color: #4CAF50;
+  }
+  
+  /* Task List Styles */
+  .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .task-item input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .task-item h5 {
+    margin: 0;
+  }
+  
+  .task-item select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+  }
+  
+  /* Task Input Section */
+  .task-input {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .task-input select,
+  .task-input textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .task-input button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .task-input button:disabled {
+    background-color: #a6c1e1;
+  }
+  
+  .task-input button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Template Item Styles */
+  .template-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+  
+  .template-item p {
+    margin: 0;
+    font-size: 14px;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .template-item .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .template-item .btn-warning,
+  .template-item .btn-primary {
+    padding: 5px 10px;
+    background-color: #ffc107;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .template-item .btn-warning:hover,
+  .template-item .btn-primary:hover {
+    background-color: #e0a800;
+  }
+  
+  .template-item .btn-primary {
+    background-color: #007bff;
+  }
+  
+  .template-item .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Select Box */
+  select {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 14px;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .progress-bar {
+      margin-top: 10px;
+    }
+  }
+  
+  /* Hide the default checkbox */
+.custom-checkbox {
+  display: none;
+}
+
+/* Custom checkbox design */
+.custom-checkbox + label {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #1D4ED8; /* Blue border when unchecked */
+  border-radius: 4px; /* Rounded corners */
+  background-color: white;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* When the checkbox is focused */
+.custom-checkbox:focus + label {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Blue focus ring */
+}
+
+/* When the checkbox is checked */
+.custom-checkbox:checked + label {
+  border-color: #10B981; /* Green border when checked */
+}
+
+/* Add the checkmark when the checkbox is checked */
+.custom-checkbox:checked + label::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg); /* Create the checkmark */
+}
+
+/* Hover effect */
+.custom-checkbox + label:hover {
+  border-color: #2563EB; /* Darker blue on hover */
+}
