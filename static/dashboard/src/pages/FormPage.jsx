@@ -68,6 +68,19 @@ function FormPage() {
       );
       return;
     }
+    const isAllDone = newTemplate.items.every((task) => {
+      console.log(task); // This will log each task object to the console
+      return task.status === "Done"; // Important: return the condition check
+    });
+
+    console.log('All tasks are marked as "Done":', isAllDone); // This will output whether all tasks are "Done"
+
+    if (isAllDone) {
+      toast.error(
+        "All list items cannot be marked as 'Done' when creating a new checklist"
+      );
+      return;
+    }
     const templateToSave = {
       ...newTemplate,
       name: templateName,
@@ -142,6 +155,7 @@ function FormPage() {
   };
 
   const handleStatusChange = (taskId, status) => {
+    console.log(taskId, status);
     setNewTemplate((prevTemplate) => ({
       ...prevTemplate,
       items: prevTemplate.items.map((item) => {
@@ -171,8 +185,8 @@ function FormPage() {
 
   return (
     <div className="w-full px-4 dark:bg-darkBg h-max min-h-screen">
-      <div className="w-full flex items-center justify-between pt-4 pb-2 ">
-        <h1 className={`dark:text-darkHeading font-semibold text-3xl`}>
+      <div className="w-full flex items-center justify-between py-4 ">
+        <h1 className={`dark:text-darkHeading font-semibold text-2xl`}>
           {template ? "Edit Checklist" : "Create Checklist"}
         </h1>
 
@@ -180,14 +194,14 @@ function FormPage() {
           <button
             type="button"
             onClick={handleSave}
-            className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-center dark:hover:bg-blue-300"
+            className="dark:bg-[#579DFF] dark:text-black px-4 py-3 text-sm items-center flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
           >
             <span>{buttonText}</span>
           </button>
 
           <button
             type="button"
-            className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 dark:hover:bg-gray-900 rounded-lg text-center"
+            className="dark:bg-[#A1BDD914] dark:text-white px-4 py-3 text-sm flex justify-center gap-2 items-center font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 dark:hover:bg-gray-900 rounded-md text-center"
             onClick={() => navigate("/")}
           >
             <span>Go Back</span>
@@ -199,7 +213,7 @@ function FormPage() {
         <div className="mb-5 relative">
           <label
             htmlFor="name"
-            className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+            className="dark:text-white block mb-2 text-l font-medium text-gray-900"
           >
             Checklist Name <span className="text-red-500">*</span>
           </label>
@@ -212,7 +226,7 @@ function FormPage() {
               id="name"
               placeholder="Enter Checklist Name"
               maxLength={50}
-              className="dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
+              className="dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
             />
 
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
@@ -221,12 +235,11 @@ function FormPage() {
           </div>
         </div>
 
-        <div className="mb-5 relative">
+        <div className="mb-8 relative">
           <label
             htmlFor="description"
             placeholder="Enter a Description"
-
-            className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+            className="dark:text-white block mb-2 text-l font-medium text-gray-900"
           >
             Description
           </label>
@@ -237,7 +250,7 @@ function FormPage() {
             id="description"
             rows="2"
             maxLength={100}
-            className="resize-none shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-16"
+            className="resize-none shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-16"
           />
           <div className="absolute right-3 bottom-2 text-sm text-gray-500 z-10">
             {description.length}/100
@@ -245,12 +258,12 @@ function FormPage() {
         </div>
 
         <form
-          className="border-t  dark:border-[#A6C5E229] pt-4 mt-8 flex flex-col my-6 relative"
+          className="border-t pt-5 dark:border-[#A6C5E229] mt-5 flex flex-col relative"
           onSubmit={handleAddItem}
         >
           <label
             htmlFor="item"
-            className="dark:text-white block mb-2 text-xl font-medium text-gray-900"
+            className="dark:text-white block mb-2 text-left font-medium text-gray-900"
           >
             Add a List Item <span className="text-red-500">*</span>
           </label>
@@ -264,7 +277,7 @@ function FormPage() {
                 id="item"
                 placeholder="Enter List Item"
                 maxLength={100}
-                className="shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-16"
+                className="shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-3.5 py-2 pr-16"
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
                 {item.length}/100
@@ -274,7 +287,7 @@ function FormPage() {
               label={"Add"}
               type="submit"
               keyType={"Add Item"}
-              className={"px-4 md:px-8 py-2 md:py-3 border border-blue-900"}
+              className={"px-4 md:px-4 py-2 md:py-2 border border-blue-900"}
             />
           </div>
         </form>

@@ -21,7 +21,6 @@ export default function DeleteModal({ isOpen, setIsOpen }) {
       setIsOpen(false);
 
       await invoke("setTasks", { issueKey, tasks: [] });
-      toast.success("All tasks have been cleared successfully!");
     } catch (error) {
       console.error("Error while clearing tasks:", error);
       toast.error("Failed to clear tasks.");

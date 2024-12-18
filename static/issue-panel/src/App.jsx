@@ -85,6 +85,7 @@ const App = () => {
       });
 
       setSettings(allSettings);
+    
 
       navigate(isAllowed ? "/" : "/no-permission");
     } catch (error) {
@@ -109,7 +110,7 @@ const App = () => {
   }
 
   return (
-    <div className="w-full m-0 h-max dark:bg-darkBg overflow-y-scroll scrollbar-hide ">
+    <div className="w-full m-0 h-max dark:bg-darkBg">
       <Routes>
         <Route path="/" element={<CheckList />} />
         <Route path="/templates" element={<Templates />} />

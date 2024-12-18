@@ -169,17 +169,17 @@ const CheckList = () => {
 
       <div className=" w-full h-max mb-4">
         <div className="header">
-          <div className="w-full flex justify-between items-center">
+          <div className="w-full flex justify-between items-end">
             <ProgressBar value={completedTasksLength} max={tasks.length} />
             <div className="w-max flex items-center">
               <PrimaryButton
-                className={"px-4 md:px-8 py-2 md:py-3 "}
+                className={"px-4 md:px-4 py-2 md:py-2 "}
                 label="Add Checklist(s)"
                 keyType="templates"
                 onClick={() => navigate("/templates")}
               />
               <PrimaryButton
-                className={"px-4 md:px-8 py-2 md:py-3 "}
+                className={"px-4 md:px-4 py-2 md:py-2 "}
                 label="Delete Checklist"
                 keyType="delete"
                 onClick={() => setIsOpen(true)}
@@ -207,42 +207,46 @@ const CheckList = () => {
               key={group.templateName}
               className="w-full mb-4 border-none dark:border-[#A6C5E229]"
             >
-              <div className="text-left mb-2">
+              <div className="text-left mb-2 bg-[#F8F8F8] dark:bg-[#22272B] p-3 rounded-md">
                 <div
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => toggleAccordion(group.templateName)}
                 >
                   <div className="text-base font-bold gap-6 w-max items-center flex text-[#626F86]  dark:text-darkHeading ">
                     {activeGroup === group.templateName ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-4  dark:text-white"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                        />
-                      </svg>
+                      <div className="w-max p-1">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-4  dark:text-white"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                          />
+                        </svg>
+                      </div>
                     ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-4 dark:text-white"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                        />
-                      </svg>
+                      <div className="w-max p-1">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-4 dark:text-white"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                          />
+                        </svg>
+                      </div>
                     )}
                     {group.templateName}
                   </div>
@@ -298,42 +302,46 @@ const CheckList = () => {
             key={"Custom"}
             className="w-full mb-2 border-none dark:border-[#A6C5E229]"
           >
-            <div className="text-left mb-2">
+            <div className="text-left mb-2 bg-[#F8F8F8] dark:bg-[#22272B] p-3 rounded-md">
               <div
                 className="flex justify-between items-center cursor-pointer"
                 onClick={() => toggleAccordion("Custom")}
               >
                 <div className="text-base font-bold gap-6 w-max items-center flex text-[#626F86] dark:text-darkHeading ">
                   {activeGroup === "Custom" ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-4 dark:text-white"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                      />
-                    </svg>
+                    <div className="w-max p-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-4  dark:text-white"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                        />
+                      </svg>
+                    </div>
                   ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-4 dark:text-white"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                      />
-                    </svg>
+                    <div className="w-max p-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-4 dark:text-white"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    </div>
                   )}
                   Custom
                 </div>

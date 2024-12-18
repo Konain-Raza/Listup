@@ -51,7 +51,7 @@ const Drawer = ({ isDrawerOpen, toggleDrawer }) => {
 
       <div
         id="drawer-example"
-        className={`fixed top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform transform ${
+        className={`fixed pr-12 top-0 left-0 z-50 h-screen p-4 overflow-y-auto transition-transform transform ${
           isDrawerOpen ? "translate-x-0" : "-translate-x-full"
         } bg-white dark:bg-darkBg w-max`}
         tabindex="-1"
@@ -68,7 +68,7 @@ const Drawer = ({ isDrawerOpen, toggleDrawer }) => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="size-6"
+              className="size-4"
             >
               <path
                 strokeLinecap="round"
@@ -80,7 +80,7 @@ const Drawer = ({ isDrawerOpen, toggleDrawer }) => {
 
           <h5
             id="drawer-label"
-            className="inline-flex text-3xl items-center  font-semibold text-gray-500 dark:text-gray-400"
+            className="inline-flex text-xl items-center  font-semibold text-gray-500 dark:text-gray-400"
           >
             {"Settings"}
           </h5>

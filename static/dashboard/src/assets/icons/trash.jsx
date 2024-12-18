@@ -3,8 +3,7 @@ import React from "react";
 const Trash = () => {
   return (
     <svg
-      width="30"
-      height="30"
+   className="w-[24px]"
       viewBox="0 0 14 14"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

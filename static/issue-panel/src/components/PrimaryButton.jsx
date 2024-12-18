@@ -10,7 +10,7 @@ const PrimaryButton = ({ type = "button", onClick, label, keyType, className}) =
     <button
       type={type}
       onClick={onClick}
-      className={`${className} flex w-max text-base gap-1 font-medium rounded-md ml-2 ${colorStyles} no-underline`}
+      className={`${className} flex w-max text-sm gap-1 font-medium rounded-md ml-2 ${colorStyles} no-underline`}
     >
       <p className="m-0 no-underline hover:no-underline"> {/* Added no-underline classes here */}
         {label}

@@ -19,11 +19,11 @@ const ProgressBar = ({ value, max }) => {
           {" "}
           {/* Full width */}
           <div
-            className={`h-2 ${barColor}`}
+            className={`h-2  ${barColor}`}
             style={{ width: `${percentage}%` }}
           ></div>
         </div>
-        <div className="text-right text-sm text-gray-500 pl-2">
+        <div className="text-right text-sm font-bold  text-gray-500 pl-2">
           {value}/{max}
         </div>
       </div>

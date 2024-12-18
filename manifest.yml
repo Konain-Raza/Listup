@@ -19,7 +19,7 @@ modules:
       handler: index.handler
 resources:
   - key: main
-    path: static/hello-world/build
+    path: static/issue-panel/build
   - key: project-page-main
     path: static/dashboard/build
 permissions:

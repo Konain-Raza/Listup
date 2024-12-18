@@ -20,14 +20,14 @@ const Home = ({ loading }) => {
 
       <div className="w-full px-4 dark:bg-[#1D2125] overflow-y-scroll scrollbar-hide ">
         <div className="w-full flex items-center justify-between py-4">
-          <h1 className="text-3xl font-semibold dark:text-darkHeading">
+          <h1 className="text-2xl font-semibold dark:text-darkHeading">
             Checklists
           </h1>
 
           <div className="flex gap-4 my-4 ">
             <button
               type="button"
-              className="dark:bg-[#579DFF] dark:text-black px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+              className="dark:bg-[#579DFF] dark:text-black px-4 py-3 text-sm items-center flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
               onClick={() => navigate("/form")}
             >
               <svg
@@ -36,7 +36,7 @@ const Home = ({ loading }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6"
+                className="size-5"
               >
                 <path
                   strokeLinecap="round"
@@ -54,7 +54,7 @@ const Home = ({ loading }) => {
                 data-drawer-target="drawer-example"
                 data-drawer-show="drawer-example"
                 aria-controls="drawer-example"
-                className="dark:bg-[#A1BDD914] dark:text-white px-6 py-3.5 text-base flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200  dark:hover:bg-gray-900 rounded-lg text-center"
+                className="dark:bg-[#A1BDD914] dark:text-white px-4 py-3  items-center text-sm flex justify-center gap-2 font-medium text-gray-800 bg-gray-100 hover:bg-gray-200  dark:hover:bg-gray-900 rounded-md text-center"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +62,7 @@ const Home = ({ loading }) => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-6"
+                  className="size-5"
                 >
                   <path
                     strokeLinecap="round"
