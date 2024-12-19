@@ -53,7 +53,7 @@ function FormPage() {
     }));
   };
   const handleSave = async () => {
-    if (!templateName || newTemplate.items.length === 0) {
+    if (!templateName || templateName.trim().length === 0 || newTemplate.items.length === 0) {
       toast.error("Please provide a checklist name and at least one item.");
       return;
     }
@@ -137,22 +137,25 @@ function FormPage() {
 
   const handleAddItem = (e) => {
     e.preventDefault();
-    if (item) {
-      setNewTemplate((prevTemplate) => ({
-        ...prevTemplate,
-        items: [
-          ...prevTemplate.items,
-          {
-            id: Date.now() + item,
-            title: item,
-            checked: false,
-            status: "To Do",
-          },
-        ],
-      }));
-      setItem("");
+    if (!item || item.trim().length === 0) {
+      toast.error("Please enter a valid item name.");
+      return;
     }
+    setNewTemplate((prevTemplate) => ({
+      ...prevTemplate,
+      items: [
+        ...prevTemplate.items,
+        {
+          id: Date.now() + item,
+          title: item.trim(),
+          checked: false,
+          status: "To Do",
+        },
+      ],
+    }));
+    setItem("");
   };
+  
 
   const handleStatusChange = (taskId, status) => {
     console.log(taskId, status);
@@ -277,7 +280,7 @@ function FormPage() {
                 id="item"
                 placeholder="Enter List Item"
                 maxLength={100}
-                className="shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-3.5 py-2 pr-16"
+                className="shadow-sm dark:bg-[#22272B] dark:border-[#A6C5E229] dark:text-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full px-3.5 py-3 pr-16"
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
                 {item.length}/100
@@ -287,7 +290,7 @@ function FormPage() {
               label={"Add"}
               type="submit"
               keyType={"Add Item"}
-              className={"px-4 md:px-4 py-2 md:py-2 border border-blue-900"}
+              className={"sm:px-4 px-5 md:px-5 py-3 md:py-3 border border-blue-900"}
             />
           </div>
         </form>

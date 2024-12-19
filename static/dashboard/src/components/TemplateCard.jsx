@@ -26,8 +26,8 @@ const TemplateCard = ({ template }) => {
           <div class="w-full mt-1 flex justify-between items-center ">
             <h1 class="text-xl font-semibold dark:text-white">
               {template.name.charAt(0).toUpperCase() +
-                (template.name.length > 20
-                  ? template.name.slice(1, 20) + "..."
+                (template.name.length > 27
+                  ? template.name.slice(1, 27) + "..."
                   : template.name.slice(1))}
             </h1>
             <div class="rounded-lg px-3 py-1 mb-2 bg-[#E9F2FF] dark:bg-[#1C2B41]">
@@ -38,7 +38,7 @@ const TemplateCard = ({ template }) => {
           </div>
 
           <div className={`w-full flex overflow-hidden flex-col`}>
-            <p class="text-gray-600 w-full truncate dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
+            <p class="text-gray-600 w-full dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
               {template.description.length > 100
                 ? template.description.slice(0, 120)
                 : template.description || ""}
@@ -80,14 +80,14 @@ const TemplateCard = ({ template }) => {
 
             <button
               className={` py-2 text-sm flex justify-center items-center font-medium gap-1  ${
-                me.email === template?.owner?.email
+                me.email === template?.owner?.email || siteAdmin
                   ? "text-red-600 hover:text-red-700 dark:text-[#F87168]"
                   : "text-gray-400 "
               }`}
-              disabled={me.email !== template?.owner?.email}
+              disabled={me.email !== template?.owner?.email && !siteAdmin}
               onClick={() => setIsOpen(true)}
             >
-              <Trash />
+              <Trash disable={me.email !== template?.owner?.email && !siteAdmin} />
 
               <span> Delete Checklist</span>
             </button>

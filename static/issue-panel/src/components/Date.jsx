@@ -34,7 +34,7 @@ const TaskDate = ({ task }) => {
 
   return (
     <button
-      className={` p-2 rounded-lg ${backgroundColorClass} overflow-hidden text-ellipsis whitespace-nowrap`}
+      className={` p-1 px-2 rounded-md ${backgroundColorClass} overflow-hidden text-ellipsis whitespace-nowrap`}
       title={displayDate}
     >
       {displayDate}
