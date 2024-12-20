@@ -14,12 +14,23 @@ modules:
       layout: basic
       icon: https://raw.githubusercontent.com/Konain-Raza/Listup/d5fdacdc7cada03ce8b86e9732ae31bd79169fb7/objects.svg
       resource: project-page-main
+  jira:issueContext:
+    - key: advanced-checklist-issue-context
+      resource: issue-context-main
+      resolver:
+        function: resolver
+      render: native
+      title: Advanced Checklist
+      description: A hello world issue context.
+      label: Hello World!
   function:
     - key: resolver
       handler: index.handler
 resources:
   - key: main
     path: static/issue-panel/build
+  - key: issue-context-main
+    path: static/issue-context/build
   - key: project-page-main
     path: static/dashboard/build
 permissions:

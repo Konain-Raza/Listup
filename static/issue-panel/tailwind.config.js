@@ -12,7 +12,7 @@ module.exports = {
         darkBlueTextHover: "#85B8FF",
         darkRedBgHover: "#331714",
         darkRedTextHover: "FD9891",
-        // Dark background color
+        jiraBlue: "#0C66E4",
         darkHeading: "#8C9BAB", // Light background color
         danger: "#DC2626", // Danger color (red)
         success: "#10B981", // Success color (green)

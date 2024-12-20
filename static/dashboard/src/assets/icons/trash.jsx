@@ -1,7 +1,6 @@
 import React from "react";
 
 const Trash = ({disable}) => {
-  console.log(disable)
   return (
     <svg
       className="w-[24px]"

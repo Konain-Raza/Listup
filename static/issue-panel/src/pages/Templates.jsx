@@ -12,18 +12,24 @@ const Templates = () => {
   const [selectedTemplates, setSelectedTemplates] = useState([]);
 
   useEffect(() => {
-    const usedTemplateNames = [
-      ...new Set(
+    const usedTemplateNames = Array.from(
+      new Set(
         tasks
-          ?.filter((task) => task.templateName !== "Custom")
+          ?.filter(
+            (task) => task.templateName && task.templateName !== "Custom"
+          )
           .map((task) => task.templateName)
-      ),
-    ];
+      )
+    );
+
     setTemplates({
       all: templates.all || [],
-      used: usedTemplateNames,
+      used:
+        usedTemplateNames.length > 0
+          ? Array.from(new Set(usedTemplateNames))
+          : [],
     });
-  }, [tasks]); 
+  }, [tasks, setTemplates]);
 
   const handleCheckboxChange = (templateName) => {
     setSelectedTemplates((prevSelected) =>
@@ -67,9 +73,8 @@ const Templates = () => {
     setTasks(updatedTasks);
     await invoke("setTasks", { issueKey, tasks: updatedTasks });
 
-   
     setSelectedTemplates([]);
-    navigate("/")
+    navigate("/");
   };
 
   const handleViewClick = (template) => {
@@ -101,11 +106,15 @@ const Templates = () => {
       {templates && templates.all && templates.all.length > 0 ? (
         <div className="flex flex-wrap gap-4 justify-start">
           {templates.all
-            .filter((template) => template.name !== "Custom") 
+            .filter((template) => template.name !== "Custom")
             .map((template) => (
               <div
+                onClick={() =>
+                  !templates.used.includes(template.name) &&
+                  handleCheckboxChange(template.name)
+                }
                 key={template.name}
-                className={`border border-gray-300 dark:border-[#A6C5E229] p-4 rounded-md w-full max-w-80 flex justify-between items-center gap-4 ${
+                className={`border border-gray-300 dark:border-[#A6C5E229] p-3 rounded-md w-full max-w-80 flex justify-between items-center gap-4 ${
                   templates.used.includes(template.name)
                     ? "bg-[#091E4208] dark:bg-[#03040442] border-transparent"
                     : ""
@@ -117,7 +126,7 @@ const Templates = () => {
                       templates.used.includes(template.name)
                         ? "cursor-default"
                         : "cursor-pointer"
-                    } container w-8 h-max`}
+                    } containere w-8 h-max dark:border-[#A6C5E229] border-[#091E4224] `}
                   >
                     <input
                       type="checkbox"
@@ -128,9 +137,10 @@ const Templates = () => {
                         templates.used.includes(template.name)
                           ? "cursor-default"
                           : "cursor-pointer"
-                      } w-5 h-5`}
+                      } w-5 h-5 dark:border-[#A6C5E229] border-[#091E4224] `}
+
                     />
-                    <span class="checkmark"></span>
+                    <span className="checkmark dark:border-[#A6C5E229] border-[#091E4224]"></span>
                   </label>
                   <span
                     className="text-md font-medium dark:text-gray-400 overflow-hidden whitespace-nowrap text-ellipsis"
@@ -156,13 +166,13 @@ const Templates = () => {
             ))}
         </div>
       ) : (
-        <p>No Checklists</p>
+        <p className="text-black dark:text-white">No Checklists</p>
       )}
 
       <div className="text-left mt-6">
         <button
           onClick={handleImportTemplates}
-          className="px-6 py-2 dark:bg-[#579DFF] dark:text-black text-base flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-sm text-center dark:hover:bg-blue-300"
+          className="px-3 py-2 dark:bg-[#579DFF] dark:text-black text-sm flex justify-center gap-2 font-medium text-white bg-jiraBlue hover:bg-blue-800 rounded-md text-center dark:hover:bg-blue-300"
         >
           Add Checklist
         </button>

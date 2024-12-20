@@ -74,15 +74,15 @@ const App = () => {
       });
       setTasks(storedTasks || []);
 
-      const usedTemplateNames = new Set(
-        storedTasks
-          .filter((task) => task.templateName !== "Custom")
-          .map((task) => task.templateName)
-      );
-      setTemplates({
-        all: allTemplates || [],
-        used: Array.from(usedTemplateNames),
-      });
+      const usedTemplateNames = storedTasks
+      .filter((task) => task.templateName && task.templateName !== "Custom")
+      .map((task) => task.templateName);
+    
+    setTemplates({
+      all: allTemplates || [],
+      used: usedTemplateNames.length > 0 ? Array.from(new Set(usedTemplateNames)) : [],
+    });
+    
 
       setSettings(allSettings);
     

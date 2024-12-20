@@ -162,6 +162,15 @@ const CheckList = () => {
       toast.error("Failed to delete task.");
     }
   };
+  const handleDeleteAll = () => {
+    
+    if (tasks.length == 0) {
+      toast.error("No tasks to delete.");
+      return;
+    } else {
+      setIsOpen(true);
+    }
+  };
 
   return (
     <div className="w-full h-max pb-4">
@@ -182,7 +191,7 @@ const CheckList = () => {
                 className={"px-4 md:px-4 py-2 md:py-2 "}
                 label="Delete Checklist"
                 keyType="delete"
-                onClick={() => setIsOpen(true)}
+                onClick={() => handleDeleteAll()}
               />
             </div>
           </div>
@@ -248,7 +257,9 @@ const CheckList = () => {
                         </svg>
                       </div>
                     )}
-                    {group.templateName}
+                    {group.templateName &&
+                      group.templateName.charAt(0).toUpperCase() +
+                        group.templateName.slice(1)}
                   </div>
 
                   <span className="flex items-center">
@@ -274,7 +285,8 @@ const CheckList = () => {
               >
                 {group.tasks.length > 0 ? (
                   group.tasks.map((task, index) => (
-                    <TaskItem
+                   <div className="px-3">
+                     <TaskItem
                       isViewable={false}
                       key={task.id || index}
                       task={task}
@@ -282,15 +294,15 @@ const CheckList = () => {
                       handleDeleteTask={handleDeleteTask}
                       updateDueDate={updateDueDate}
                     />
+                    </div>
                   ))
                 ) : (
-                  <tr className="row">
-                    <td
-                      colSpan={4} // Adjusted to span the correct number of columns
+                  <tr className="w-full">
+                    <p
                       className="text-center dark:text-[#626F86]"
                     >
                       No items available
-                    </td>
+                    </p>
                   </tr>
                 )}
               </div>
@@ -371,6 +383,8 @@ const CheckList = () => {
                 tasks
                   .filter((task) => task.templateName === "Custom")
                   .map((task) => (
+                   <div className="px-3">
+
                     <TaskItem
                       key={task.id}
                       isViewable={false}
@@ -379,12 +393,13 @@ const CheckList = () => {
                       handleDeleteTask={handleDeleteTask}
                       updateDueDate={updateDueDate}
                     />
+                    </div>
                   ))
               ) : (
-                <tr className="row">
-                  <td colSpan={4} className="text-center dark:text-[#626F86]">
+                <tr className="w-full">
+                  <p  className="text-center dark:text-[#626F86]">
                     No items available
-                  </td>
+                  </p>
                 </tr>
               )}
             </div>

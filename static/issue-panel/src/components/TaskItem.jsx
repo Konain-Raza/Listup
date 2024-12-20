@@ -32,7 +32,7 @@ const TaskItem = ({
   return (
     <div
       key={task.id}
-      className="flex items-center justify-between mb-3 w-full px-3"
+      className="flex items-center justify-between mb-3 w-full"
     >
       <div className="flex items-center gap-2 w-[80%] overflow-hidden">
         {!isViewable && (

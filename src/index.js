@@ -7,11 +7,9 @@ const getKey = () => "advancedChecklist";
 
 resolver.define("getTasks", async (req) => {
   const { issueKey } = req.payload;
-  console.log(issueKey);
 
   try {
     const tasks = await storage.get(`${issueKey}_tasks`);
-    console.log(tasks);
     return tasks || [];
   } catch {
     throw new Error("Failed to retrieve tasks.");
@@ -71,8 +69,6 @@ resolver.define("getTemplates", async (req) => {
 
 resolver.define("setTasks", async (req) => {
   const { issueKey, tasks } = req.payload;
-  console.log(issueKey);
-  console.log(tasks);
   try {
     await storage.set(`${issueKey}_tasks`, tasks);
     return { success: true };

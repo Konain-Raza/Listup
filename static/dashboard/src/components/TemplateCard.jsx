@@ -23,29 +23,29 @@ const TemplateCard = ({ template }) => {
       <DeleteModal isOpen={isOpen} setIsOpen={setIsOpen} template={template} />
       <div className="w-full dark:border-[#A6C5E229] border rounded-lg h-[250px] bg-white dark:bg-darkBg ">
         <div className="p-6 flex flex-col justify-between items-start h-full w-full">
-          <div class="w-full mt-1 flex justify-between items-center ">
-            <h1 class="text-xl font-semibold dark:text-white">
+          <div className="w-full mt-1 flex justify-between items-center ">
+            <h1 className="text-xl font-semibold dark:text-white">
               {template.name.charAt(0).toUpperCase() +
                 (template.name.length > 27
                   ? template.name.slice(1, 27) + "..."
                   : template.name.slice(1))}
             </h1>
-            <div class="rounded-lg px-3 py-1 mb-2 bg-[#E9F2FF] dark:bg-[#1C2B41]">
-              <span class="text-blue-700 text-base dark:text-[#579DFF]">
+            <div className="rounded-lg px-3 py-1 mb-2 bg-[#E9F2FF] dark:bg-[#1C2B41]">
+              <span className="text-blue-700 text-base dark:text-[#579DFF]">
                 Total Items: {template.items.length}
               </span>
             </div>
           </div>
 
           <div className={`w-full flex overflow-hidden flex-col`}>
-            <p class="text-gray-600 w-full dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
+            <p className="text-gray-600 w-full dark:text-gray-400 text-base mt-4 line-clamp-2 h-14 overflow-hidden">
               {template.description.length > 100
                 ? template.description.slice(0, 120)
                 : template.description || ""}
             </p>
 
-            <div class="mt-2 text-base">
-              <span class="text-gray-400 ">
+            <div className="mt-2 text-base">
+              <span className="text-gray-400 ">
                 {template.editedBy ? `Edited By: ` : "Created By: "}
               </span>
               <span className="dark:text-white">
@@ -58,7 +58,7 @@ const TemplateCard = ({ template }) => {
             </div>
           </div>
 
-          <div class="mt-4 w-full flex h-max justify-between items-center">
+          <div className="mt-4 w-full flex h-max justify-between items-center">
             <div className="w-max flex gap-1">
               <button
                 className={`dark:bg-[#A1BDD914] rounded-md px-6 py-2 text-sm font-medium text-black bg-gray-100 hover:bg-gray-300 dark:text-white dark:hover:bg-gray-900`}

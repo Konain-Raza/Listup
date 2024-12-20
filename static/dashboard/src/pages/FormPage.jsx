@@ -69,11 +69,9 @@ function FormPage() {
       return;
     }
     const isAllDone = newTemplate.items.every((task) => {
-      console.log(task); // This will log each task object to the console
       return task.status === "Done"; // Important: return the condition check
     });
 
-    console.log('All tasks are marked as "Done":', isAllDone); // This will output whether all tasks are "Done"
 
     if (isAllDone) {
       toast.error(
@@ -158,7 +156,6 @@ function FormPage() {
   
 
   const handleStatusChange = (taskId, status) => {
-    console.log(taskId, status);
     setNewTemplate((prevTemplate) => ({
       ...prevTemplate,
       items: prevTemplate.items.map((item) => {

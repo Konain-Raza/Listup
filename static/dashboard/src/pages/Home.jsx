@@ -27,7 +27,7 @@ const Home = ({ loading }) => {
           <div className="flex gap-4 my-4 ">
             <button
               type="button"
-              className="dark:bg-[#579DFF] dark:text-black px-4 py-3 text-sm items-center flex justify-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
+              className="dark:bg-[#579DFF] dark:text-black px-4 py-3 text-sm items-center flex justify-center gap-2 font-medium text-white bg-jiraBlue hover:bg-blue-800 rounded-md text-center dark:hover:bg-blue-300 dark:focus:ring-blue-200"
               onClick={() => navigate("/form")}
             >
               <svg
