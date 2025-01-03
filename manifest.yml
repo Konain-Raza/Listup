@@ -32,7 +32,7 @@ resources:
   - key: issue-context-main
     path: static/issue-context/build
   - key: project-page-main
-    path: static/dashboard/build
+    path: static/project-page/build
 permissions:
   scopes:
     - storage:app
